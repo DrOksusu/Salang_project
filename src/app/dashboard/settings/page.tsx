@@ -6,6 +6,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import { useToast, ToastContainer } from "@/components/ui/toast";
 
 interface SettingsData {
@@ -140,94 +148,97 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="max-w-lg">
+      <Card>
         <CardHeader>
-          <CardTitle>팀별 인건비율 설정</CardTitle>
+          <CardTitle>팀별 지표 설정</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="designTeamRatio">디자인팀 인건비율 (%)</Label>
-            <Input
-              id="designTeamRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={designTeamRatio}
-              onChange={(e) => setDesignTeamRatio(e.target.value)}
-              placeholder="예: 20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="fieldTeamRatio">현장팀 인건비율 (%)</Label>
-            <Input
-              id="fieldTeamRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={fieldTeamRatio}
-              onChange={(e) => setFieldTeamRatio(e.target.value)}
-              placeholder="예: 20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="designTeamIncentiveRatio">디자인팀 인센티브율 (%)</Label>
-            <Input
-              id="designTeamIncentiveRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={designTeamIncentiveRatio}
-              onChange={(e) => setDesignTeamIncentiveRatio(e.target.value)}
-              placeholder="예: 10"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="fieldTeamIncentiveRatio">현장팀 인센티브율 (%)</Label>
-            <Input
-              id="fieldTeamIncentiveRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={fieldTeamIncentiveRatio}
-              onChange={(e) => setFieldTeamIncentiveRatio(e.target.value)}
-              placeholder="예: 10"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="salesTeamRatio">영업팀 인건비율 (%)</Label>
-            <Input
-              id="salesTeamRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={salesTeamRatio}
-              onChange={(e) => setSalesTeamRatio(e.target.value)}
-              placeholder="예: 20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="salesTeamIncentiveRatio">영업팀 인센티브율 (%)</Label>
-            <Input
-              id="salesTeamIncentiveRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={salesTeamIncentiveRatio}
-              onChange={(e) => setSalesTeamIncentiveRatio(e.target.value)}
-              placeholder="예: 10"
-            />
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-28">팀</TableHead>
+                <TableHead>인건비율 (%)</TableHead>
+                <TableHead>인센티브율 (%)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">디자인팀</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={designTeamRatio}
+                    onChange={(e) => setDesignTeamRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={designTeamIncentiveRatio}
+                    onChange={(e) => setDesignTeamIncentiveRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">현장팀</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={fieldTeamRatio}
+                    onChange={(e) => setFieldTeamRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={fieldTeamIncentiveRatio}
+                    onChange={(e) => setFieldTeamIncentiveRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">영업팀</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={salesTeamRatio}
+                    onChange={(e) => setSalesTeamRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={salesTeamIncentiveRatio}
+                    onChange={(e) => setSalesTeamIncentiveRatio(e.target.value)}
+                    className="w-28"
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
 
           <Button onClick={handleSave} disabled={saving}>
             {saving ? "저장 중..." : "저장"}
