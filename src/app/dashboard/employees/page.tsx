@@ -173,9 +173,9 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">직원 관리</h1>
+        <h1 className="text-xl md:text-2xl font-bold">직원 관리</h1>
         <Button
           variant={showForm ? "outline" : "default"}
           onClick={() => setShowForm(!showForm)}
@@ -278,8 +278,8 @@ export default function EmployeesPage() {
       )}
 
       <Card>
-        <CardContent className="p-0">
-          <Table>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table className="min-w-[700px]">
             <TableHeader>
               <TableRow>
                 <TableHead>이름</TableHead>

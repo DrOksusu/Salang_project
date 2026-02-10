@@ -106,12 +106,12 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">설정</h1>
+    <div className="space-y-4 md:space-y-6">
+      <h1 className="text-xl md:text-2xl font-bold">설정</h1>
 
       <Card className="max-w-lg">
         <CardHeader>
-          <CardTitle>비율 설정</CardTitle>
+          <CardTitle>전체 지표 설정</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -156,7 +156,7 @@ export default function SettingsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-28">팀</TableHead>
+                <TableHead className="w-20 md:w-28">팀</TableHead>
                 <TableHead>인건비율 (%)</TableHead>
                 <TableHead>인센티브율 (%)</TableHead>
               </TableRow>
@@ -172,7 +172,7 @@ export default function SettingsPage() {
                     max="100"
                     value={designTeamRatio}
                     onChange={(e) => setDesignTeamRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
                 <TableCell>
@@ -183,7 +183,7 @@ export default function SettingsPage() {
                     max="100"
                     value={designTeamIncentiveRatio}
                     onChange={(e) => setDesignTeamIncentiveRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
               </TableRow>
@@ -197,7 +197,7 @@ export default function SettingsPage() {
                     max="100"
                     value={fieldTeamRatio}
                     onChange={(e) => setFieldTeamRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
                 <TableCell>
@@ -208,7 +208,7 @@ export default function SettingsPage() {
                     max="100"
                     value={fieldTeamIncentiveRatio}
                     onChange={(e) => setFieldTeamIncentiveRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
               </TableRow>
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                     max="100"
                     value={salesTeamRatio}
                     onChange={(e) => setSalesTeamRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
                 <TableCell>
@@ -233,7 +233,7 @@ export default function SettingsPage() {
                     max="100"
                     value={salesTeamIncentiveRatio}
                     onChange={(e) => setSalesTeamIncentiveRatio(e.target.value)}
-                    className="w-28"
+                    className="w-20 md:w-28"
                   />
                 </TableCell>
               </TableRow>

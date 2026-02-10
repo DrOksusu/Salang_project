@@ -128,16 +128,16 @@ export default function SalesPage() {
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">매출 관리</h1>
+    <div className="space-y-4 md:space-y-6">
+      <h1 className="text-xl md:text-2xl font-bold">매출 관리</h1>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">연도</label>
           <Select
             value={String(year)}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="w-28"
+            className="w-24 md:w-28"
           >
             {yearOptions.map((y) => (
               <option key={y} value={y}>
@@ -151,7 +151,7 @@ export default function SalesPage() {
           <Select
             value={String(month)}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="w-24"
+            className="w-20 md:w-24"
           >
             {monthOptions.map((m) => (
               <option key={m} value={m}>
@@ -171,24 +171,26 @@ export default function SalesPage() {
               <CardTitle>실제매출 입력</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  value={actualSales.toLocaleString()}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/,/g, "");
-                    setActualSales(Number(raw) || 0);
-                  }}
-                  className="w-64 text-lg font-bold h-12"
-                />
-                <span className="text-lg">원</span>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-2 flex-1">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={actualSales.toLocaleString()}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/,/g, "");
+                      setActualSales(Number(raw) || 0);
+                    }}
+                    className="flex-1 sm:max-w-64 text-lg font-bold h-12"
+                  />
+                  <span className="text-lg">원</span>
+                </div>
                 <Button onClick={handleSave}>저장</Button>
               </div>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-5">
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">월 인건비</CardTitle>
@@ -243,7 +245,7 @@ export default function SalesPage() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm font-semibold">디자인팀</CardTitle>

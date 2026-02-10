@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,6 +14,8 @@ import {
   Settings,
   LogOut,
   User,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -35,6 +38,7 @@ const employeeMenuItems = [
 export default function Sidebar({ role = "admin" }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   const menuItems = role === "employee" ? employeeMenuItems : adminMenuItems;
 
@@ -49,15 +53,15 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
     }
   };
 
-  return (
-    <aside className="flex h-screen w-64 flex-col border-r border-border/50 bg-card">
+  const sidebarContent = (
+    <>
       {/* 로고 */}
-      <div className="flex h-20 items-center gap-3 border-b border-border/50 px-6">
+      <div className="flex h-16 md:h-20 items-center gap-3 border-b border-border/50 px-4 md:px-6">
         <Image
           src="/logo.jpg"
           alt="살랑"
-          width={44}
-          height={44}
+          width={36}
+          height={36}
           className="rounded-lg"
         />
         <div>
@@ -66,10 +70,17 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
             INTERIOR DESIGN
           </p>
         </div>
+        {/* 모바일 닫기 버튼 */}
+        <button
+          onClick={() => setOpen(false)}
+          className="ml-auto md:hidden p-1 rounded-lg text-muted-foreground hover:bg-secondary"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* 메뉴 */}
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-1 p-3 md:p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -81,6 +92,7 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setOpen(false)}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
@@ -96,7 +108,7 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
       </nav>
 
       {/* 로그아웃 */}
-      <div className="border-t border-border/50 p-4">
+      <div className="border-t border-border/50 p-3 md:p-4">
         <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
@@ -105,6 +117,41 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
           로그아웃
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* 모바일 햄버거 버튼 */}
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed top-3 left-3 z-50 md:hidden p-2 rounded-lg bg-card border border-border/50 shadow-sm"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
+      {/* 모바일 오버레이 */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* 모바일 사이드바 (슬라이드) */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-card border-r border-border/50 transition-transform duration-200 md:hidden",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* 데스크톱 사이드바 (고정) */}
+      <aside className="hidden md:flex h-screen w-64 flex-col border-r border-border/50 bg-card shrink-0">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

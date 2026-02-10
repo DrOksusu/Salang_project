@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -146,16 +146,16 @@ export default function SalaryPage() {
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">급여 관리</h1>
+    <div className="space-y-4 md:space-y-6">
+      <h1 className="text-xl md:text-2xl font-bold">급여 관리</h1>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">연도</label>
           <Select
             value={String(year)}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="w-28"
+            className="w-24 md:w-28"
           >
             {yearOptions.map((y) => (
               <option key={y} value={y}>
@@ -169,7 +169,7 @@ export default function SalaryPage() {
           <Select
             value={String(month)}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="w-24"
+            className="w-20 md:w-24"
           >
             {monthOptions.map((m) => (
               <option key={m} value={m}>
@@ -193,8 +193,8 @@ export default function SalaryPage() {
             </TableHeader>
             <TableBody>
               {teamNames.map((team) => (
-                <>
-                  <TableRow key={`team-${team}`} className="bg-muted/50">
+                <Fragment key={team}>
+                  <TableRow className="bg-muted/50">
                     <TableCell colSpan={2} className="font-bold text-sm">
                       {team}
                     </TableCell>
@@ -210,12 +210,12 @@ export default function SalaryPage() {
                           onChange={(e) =>
                             handleSalaryChange(emp.id, e.target.value.replace(/,/g, ""))
                           }
-                          className="w-48"
+                          className="w-32 md:w-48"
                         />
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow key={`subtotal-${team}`} className="border-b-2">
+                  <TableRow className="border-b-2">
                     <TableCell className="pl-6 text-sm font-semibold text-muted-foreground">
                       {team} 소계
                     </TableCell>
@@ -223,7 +223,7 @@ export default function SalaryPage() {
                       {getTeamTotal(team).toLocaleString()}원
                     </TableCell>
                   </TableRow>
-                </>
+                </Fragment>
               ))}
               <TableRow className="bg-muted/30">
                 <TableCell className="font-bold">전체 합계</TableCell>
@@ -234,7 +234,7 @@ export default function SalaryPage() {
             </TableBody>
           </Table>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">월 인건비 합계</CardTitle>

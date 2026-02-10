@@ -58,7 +58,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen">
       <Sidebar role={user?.role} />
-      <main className="flex-1 overflow-auto p-8">{children}</main>
+      <main className="flex-1 overflow-auto p-4 pt-14 md:pt-6 md:p-6 lg:p-8">{children}</main>
     </div>
   );
 }

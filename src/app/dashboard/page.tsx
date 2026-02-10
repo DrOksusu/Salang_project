@@ -115,9 +115,9 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">대시보드</h1>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl md:text-2xl font-bold">대시보드</h1>
         <div className="flex items-center gap-2">
           <Select
             value={String(year)}
@@ -146,13 +146,13 @@ export default function DashboardPage() {
 
       {summary && (
         <>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground">월 인건비</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xl font-bold">
+              <p className="text-base md:text-xl font-bold">
                 {summary.totalLaborCost.toLocaleString()}원
               </p>
             </CardContent>
@@ -163,7 +163,7 @@ export default function DashboardPage() {
               <CardTitle className="text-sm text-muted-foreground">월 목표매출</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xl font-bold">
+              <p className="text-base md:text-xl font-bold">
                 {summary.targetSales.toLocaleString()}원
               </p>
             </CardContent>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
               <CardTitle className="text-sm text-muted-foreground">실제매출</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xl font-bold">
+              <p className="text-base md:text-xl font-bold">
                 {summary.actualSales.toLocaleString()}원
               </p>
             </CardContent>
@@ -204,14 +204,14 @@ export default function DashboardPage() {
               <CardTitle className="text-sm text-muted-foreground">인센티브 총액</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xl font-bold">
+              <p className="text-base md:text-xl font-bold">
                 {summary.incentiveTotal.toLocaleString()}원
               </p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold">디자인팀</CardTitle>

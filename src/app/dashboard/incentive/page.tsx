@@ -173,16 +173,16 @@ export default function IncentivePage() {
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">인센티브 배분</h1>
+    <div className="space-y-4 md:space-y-6">
+      <h1 className="text-xl md:text-2xl font-bold">인센티브 배분</h1>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">연도</label>
           <Select
             value={String(year)}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="w-28"
+            className="w-24 md:w-28"
           >
             {yearOptions.map((y) => (
               <option key={y} value={y}>
@@ -196,7 +196,7 @@ export default function IncentivePage() {
           <Select
             value={String(month)}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="w-24"
+            className="w-20 md:w-24"
           >
             {monthOptions.map((m) => (
               <option key={m} value={m}>
@@ -211,7 +211,7 @@ export default function IncentivePage() {
         <div className="text-muted-foreground">로딩 중...</div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader>
                 <CardTitle>인센티브 총액</CardTitle>
@@ -317,7 +317,7 @@ export default function IncentivePage() {
                       onChange={(e) =>
                         handleIncentiveChange(emp.id, e.target.value)
                       }
-                      className="w-48"
+                      className="w-32 md:w-48"
                       min={0}
                     />
                   </TableCell>
