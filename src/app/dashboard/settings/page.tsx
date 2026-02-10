@@ -14,6 +14,8 @@ interface SettingsData {
   incentive_ratio: number;
   design_team_labor_cost_ratio: number;
   field_team_labor_cost_ratio: number;
+  design_team_incentive_ratio: number;
+  field_team_incentive_ratio: number;
   updated_at: string;
 }
 
@@ -28,6 +30,8 @@ export default function SettingsPage() {
   const [incentiveRatio, setIncentiveRatio] = useState("");
   const [designTeamRatio, setDesignTeamRatio] = useState("");
   const [fieldTeamRatio, setFieldTeamRatio] = useState("");
+  const [designTeamIncentiveRatio, setDesignTeamIncentiveRatio] = useState("");
+  const [fieldTeamIncentiveRatio, setFieldTeamIncentiveRatio] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
@@ -41,6 +45,8 @@ export default function SettingsPage() {
           setIncentiveRatio(String(res.data.incentive_ratio));
           setDesignTeamRatio(String(res.data.design_team_labor_cost_ratio));
           setFieldTeamRatio(String(res.data.field_team_labor_cost_ratio));
+          setDesignTeamIncentiveRatio(String(res.data.design_team_incentive_ratio));
+          setFieldTeamIncentiveRatio(String(res.data.field_team_incentive_ratio));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "설정을 불러올 수 없습니다.";
@@ -61,6 +67,8 @@ export default function SettingsPage() {
         incentive_ratio: Number(incentiveRatio),
         design_team_labor_cost_ratio: Number(designTeamRatio),
         field_team_labor_cost_ratio: Number(fieldTeamRatio),
+        design_team_incentive_ratio: Number(designTeamIncentiveRatio),
+        field_team_incentive_ratio: Number(fieldTeamIncentiveRatio),
       });
       if (res.success) {
         toast({ title: "성공", description: "설정이 저장되었습니다." });
@@ -154,6 +162,34 @@ export default function SettingsPage() {
               value={fieldTeamRatio}
               onChange={(e) => setFieldTeamRatio(e.target.value)}
               placeholder="예: 20"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="designTeamIncentiveRatio">디자인팀 인센티브율 (%)</Label>
+            <Input
+              id="designTeamIncentiveRatio"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={designTeamIncentiveRatio}
+              onChange={(e) => setDesignTeamIncentiveRatio(e.target.value)}
+              placeholder="예: 10"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="fieldTeamIncentiveRatio">현장팀 인센티브율 (%)</Label>
+            <Input
+              id="fieldTeamIncentiveRatio"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={fieldTeamIncentiveRatio}
+              onChange={(e) => setFieldTeamIncentiveRatio(e.target.value)}
+              placeholder="예: 10"
             />
           </div>
 

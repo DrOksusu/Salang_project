@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, updated_at FROM settings LIMIT 1"
+      "SELECT id, labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio, updated_at FROM settings LIMIT 1"
     );
 
     if (rows.length === 0) {
@@ -44,7 +44,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio } = await request.json();
+    const { labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio } = await request.json();
 
     if (labor_cost_ratio == null || incentive_ratio == null) {
       return NextResponse.json(
@@ -54,12 +54,12 @@ export async function PUT(request: NextRequest) {
     }
 
     await pool.query(
-      "UPDATE settings SET labor_cost_ratio = ?, incentive_ratio = ?, design_team_labor_cost_ratio = ?, field_team_labor_cost_ratio = ?, updated_at = NOW() WHERE id = 1",
-      [labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio ?? 20.00, field_team_labor_cost_ratio ?? 20.00]
+      "UPDATE settings SET labor_cost_ratio = ?, incentive_ratio = ?, design_team_labor_cost_ratio = ?, field_team_labor_cost_ratio = ?, design_team_incentive_ratio = ?, field_team_incentive_ratio = ?, updated_at = NOW() WHERE id = 1",
+      [labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio ?? 20.00, field_team_labor_cost_ratio ?? 20.00, design_team_incentive_ratio ?? 10.00, field_team_incentive_ratio ?? 10.00]
     );
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, updated_at FROM settings WHERE id = 1"
+      "SELECT id, labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio, updated_at FROM settings WHERE id = 1"
     );
 
     return NextResponse.json({ success: true, data: rows[0] });

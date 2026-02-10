@@ -45,6 +45,14 @@ interface SummaryData {
   designTeamIncentive: number;
   fieldTeamIncentive: number;
   distributedIncentive: number;
+  designTeamLaborCost: number;
+  designTeamTargetSales: number;
+  designTeamExcessSales: number;
+  designTeamIncentiveRatio: number;
+  fieldTeamLaborCost: number;
+  fieldTeamTargetSales: number;
+  fieldTeamExcessSales: number;
+  fieldTeamIncentiveRatio: number;
 }
 
 export default function IncentivePage() {
@@ -58,6 +66,7 @@ export default function IncentivePage() {
   const [incentiveTotal, setIncentiveTotal] = useState(0);
   const [designTeamIncentive, setDesignTeamIncentive] = useState(0);
   const [fieldTeamIncentive, setFieldTeamIncentive] = useState(0);
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
 
@@ -74,6 +83,7 @@ export default function IncentivePage() {
         ),
       ]);
 
+      setSummaryData(summaryRes.data);
       setIncentiveTotal(Math.round(summaryRes.data.incentiveTotal));
       setDesignTeamIncentive(Math.round(summaryRes.data.designTeamIncentive));
       setFieldTeamIncentive(Math.round(summaryRes.data.fieldTeamIncentive));
@@ -208,22 +218,52 @@ export default function IncentivePage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm text-muted-foreground">디자인팀 인센티브</CardTitle>
+                <CardTitle className="text-sm font-semibold">디자인팀</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-xl font-bold">
-                  {designTeamIncentive.toLocaleString()}원
-                </p>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">인건비</span>
+                  <span className="font-bold">{(summaryData?.designTeamLaborCost ?? 0).toLocaleString()}원</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">목표매출</span>
+                  <span className="font-bold">{Math.round(summaryData?.designTeamTargetSales ?? 0).toLocaleString()}원</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">초과매출</span>
+                  <span className={`font-bold ${(summaryData?.designTeamExcessSales ?? 0) > 0 ? "text-green-500" : ""}`}>
+                    {Math.round(summaryData?.designTeamExcessSales ?? 0).toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">인센티브</span>
+                  <span className="font-bold">{designTeamIncentive.toLocaleString()}원</span>
+                </div>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm text-muted-foreground">현장팀 인센티브</CardTitle>
+                <CardTitle className="text-sm font-semibold">현장팀</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-xl font-bold">
-                  {fieldTeamIncentive.toLocaleString()}원
-                </p>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">인건비</span>
+                  <span className="font-bold">{(summaryData?.fieldTeamLaborCost ?? 0).toLocaleString()}원</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">목표매출</span>
+                  <span className="font-bold">{Math.round(summaryData?.fieldTeamTargetSales ?? 0).toLocaleString()}원</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">초과매출</span>
+                  <span className={`font-bold ${(summaryData?.fieldTeamExcessSales ?? 0) > 0 ? "text-green-500" : ""}`}>
+                    {Math.round(summaryData?.fieldTeamExcessSales ?? 0).toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">인센티브</span>
+                  <span className="font-bold">{fieldTeamIncentive.toLocaleString()}원</span>
+                </div>
               </CardContent>
             </Card>
           </div>

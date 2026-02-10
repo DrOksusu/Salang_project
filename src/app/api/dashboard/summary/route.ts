@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // settings 조회
     const [settingsRows] = await pool.query<RowDataPacket[]>(
-      "SELECT labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio FROM settings LIMIT 1"
+      "SELECT labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio FROM settings LIMIT 1"
     );
 
     if (settingsRows.length === 0) {
@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
     const incentiveRatio = Number(settingsRows[0].incentive_ratio);
     const designTeamLaborCostRatio = Number(settingsRows[0].design_team_labor_cost_ratio);
     const fieldTeamLaborCostRatio = Number(settingsRows[0].field_team_labor_cost_ratio);
+    const designTeamIncentiveRatio = Number(settingsRows[0].design_team_incentive_ratio);
+    const fieldTeamIncentiveRatio = Number(settingsRows[0].field_team_incentive_ratio);
 
     // 해당 월 전체 급여 합산
     const [salaryRows] = await pool.query<RowDataPacket[]>(
@@ -56,7 +58,24 @@ export async function GET(request: NextRequest) {
     );
     const distributedIncentive = Number(incentiveRows[0].total);
 
-    // 계산: 월 목표매출 = 월 인건비 / (인건비율/100)
+    // 팀별 급여 합산 쿼리
+    const [teamSalaryRows] = await pool.query<RowDataPacket[]>(
+      `SELECT u.team, COALESCE(SUM(ms.amount), 0) AS total
+       FROM monthly_salary ms
+       JOIN users u ON ms.user_id = u.id
+       WHERE ms.year = ? AND ms.month = ? AND u.team IN ('디자인팀', '현장팀')
+       GROUP BY u.team`,
+      [year, month]
+    );
+
+    let designTeamLaborCost = 0;
+    let fieldTeamLaborCost = 0;
+    for (const row of teamSalaryRows) {
+      if (row.team === '디자인팀') designTeamLaborCost = Number(row.total);
+      if (row.team === '현장팀') fieldTeamLaborCost = Number(row.total);
+    }
+
+    // 전사 계산: 월 목표매출 = 월 인건비 / (인건비율/100)
     const targetSales = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
     const excessSales = Math.max(0, actualSales - targetSales);
     const incentiveTotal = excessSales * (incentiveRatio / 100);
@@ -69,6 +88,20 @@ export async function GET(request: NextRequest) {
       ? incentiveTotal * (fieldTeamLaborCostRatio / laborCostRatio)
       : 0;
 
+    // 디자인팀 독립 계산
+    const designTeamTargetSales = designTeamLaborCostRatio > 0
+      ? designTeamLaborCost / (designTeamLaborCostRatio / 100)
+      : 0;
+    const designTeamExcessSales = Math.max(0, actualSales - designTeamTargetSales);
+    const designTeamIndependentIncentive = designTeamExcessSales * (designTeamIncentiveRatio / 100);
+
+    // 현장팀 독립 계산
+    const fieldTeamTargetSales = fieldTeamLaborCostRatio > 0
+      ? fieldTeamLaborCost / (fieldTeamLaborCostRatio / 100)
+      : 0;
+    const fieldTeamExcessSales = Math.max(0, actualSales - fieldTeamTargetSales);
+    const fieldTeamIndependentIncentive = fieldTeamExcessSales * (fieldTeamIncentiveRatio / 100);
+
     return NextResponse.json({
       success: true,
       data: {
@@ -79,13 +112,21 @@ export async function GET(request: NextRequest) {
         actualSales,
         excessSales,
         incentiveTotal,
-        designTeamIncentive,
-        fieldTeamIncentive,
+        designTeamIncentive: designTeamIndependentIncentive,
+        fieldTeamIncentive: fieldTeamIndependentIncentive,
         distributedIncentive,
         laborCostRatio,
         incentiveRatio,
         designTeamLaborCostRatio,
         fieldTeamLaborCostRatio,
+        designTeamLaborCost,
+        designTeamTargetSales,
+        designTeamExcessSales,
+        designTeamIncentiveRatio,
+        fieldTeamLaborCost,
+        fieldTeamTargetSales,
+        fieldTeamExcessSales,
+        fieldTeamIncentiveRatio,
       },
     });
   } catch (error) {

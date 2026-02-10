@@ -24,11 +24,13 @@ CREATE TABLE IF NOT EXISTS settings (
   incentive_ratio DECIMAL(5,2) NOT NULL DEFAULT 10.00,
   design_team_labor_cost_ratio DECIMAL(5,2) NOT NULL DEFAULT 20.00,
   field_team_labor_cost_ratio DECIMAL(5,2) NOT NULL DEFAULT 20.00,
+  design_team_incentive_ratio DECIMAL(5,2) NOT NULL DEFAULT 10.00,
+  field_team_incentive_ratio DECIMAL(5,2) NOT NULL DEFAULT 10.00,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 기본 설정 1행 삽입
-INSERT INTO settings (labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio) VALUES (20.00, 10.00, 20.00, 20.00);
+INSERT INTO settings (labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio) VALUES (20.00, 10.00, 20.00, 20.00, 10.00, 10.00);
 
 -- 월별 급여
 CREATE TABLE IF NOT EXISTS monthly_salary (
