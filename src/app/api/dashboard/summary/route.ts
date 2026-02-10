@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // settings 조회
     const [settingsRows] = await pool.query<RowDataPacket[]>(
-      "SELECT labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio FROM settings LIMIT 1"
+      "SELECT labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio, design_team_incentive_ratio, field_team_incentive_ratio, sales_team_labor_cost_ratio, sales_team_incentive_ratio FROM settings LIMIT 1"
     );
 
     if (settingsRows.length === 0) {
@@ -36,6 +36,8 @@ export async function GET(request: NextRequest) {
     const fieldTeamLaborCostRatio = Number(settingsRows[0].field_team_labor_cost_ratio);
     const designTeamIncentiveRatio = Number(settingsRows[0].design_team_incentive_ratio);
     const fieldTeamIncentiveRatio = Number(settingsRows[0].field_team_incentive_ratio);
+    const salesTeamLaborCostRatio = Number(settingsRows[0].sales_team_labor_cost_ratio);
+    const salesTeamIncentiveRatio = Number(settingsRows[0].sales_team_incentive_ratio);
 
     // 해당 월 전체 급여 합산
     const [salaryRows] = await pool.query<RowDataPacket[]>(
@@ -63,16 +65,18 @@ export async function GET(request: NextRequest) {
       `SELECT u.team, COALESCE(SUM(ms.amount), 0) AS total
        FROM monthly_salary ms
        JOIN users u ON ms.user_id = u.id
-       WHERE ms.year = ? AND ms.month = ? AND u.team IN ('디자인팀', '현장팀')
+       WHERE ms.year = ? AND ms.month = ? AND u.team IN ('디자인팀', '현장팀', '영업팀')
        GROUP BY u.team`,
       [year, month]
     );
 
     let designTeamLaborCost = 0;
     let fieldTeamLaborCost = 0;
+    let salesTeamLaborCost = 0;
     for (const row of teamSalaryRows) {
       if (row.team === '디자인팀') designTeamLaborCost = Number(row.total);
       if (row.team === '현장팀') fieldTeamLaborCost = Number(row.total);
+      if (row.team === '영업팀') salesTeamLaborCost = Number(row.total);
     }
 
     // 전사 계산: 월 목표매출 = 월 인건비 / (인건비율/100)
@@ -102,6 +106,13 @@ export async function GET(request: NextRequest) {
     const fieldTeamExcessSales = Math.max(0, actualSales - fieldTeamTargetSales);
     const fieldTeamIndependentIncentive = fieldTeamExcessSales * (fieldTeamIncentiveRatio / 100);
 
+    // 영업팀 독립 계산
+    const salesTeamTargetSales = salesTeamLaborCostRatio > 0
+      ? salesTeamLaborCost / (salesTeamLaborCostRatio / 100)
+      : 0;
+    const salesTeamExcessSales = Math.max(0, actualSales - salesTeamTargetSales);
+    const salesTeamIndependentIncentive = salesTeamExcessSales * (salesTeamIncentiveRatio / 100);
+
     return NextResponse.json({
       success: true,
       data: {
@@ -127,6 +138,12 @@ export async function GET(request: NextRequest) {
         fieldTeamTargetSales,
         fieldTeamExcessSales,
         fieldTeamIncentiveRatio,
+        salesTeamLaborCost,
+        salesTeamTargetSales,
+        salesTeamExcessSales,
+        salesTeamIncentiveRatio,
+        salesTeamLaborCostRatio,
+        salesTeamIncentive: salesTeamIndependentIncentive,
       },
     });
   } catch (error) {

@@ -20,6 +20,8 @@ export interface Settings {
   field_team_labor_cost_ratio: number;
   design_team_incentive_ratio: number;
   field_team_incentive_ratio: number;
+  sales_team_labor_cost_ratio: number;
+  sales_team_incentive_ratio: number;
   updated_at: string;
 }
 
@@ -77,4 +79,10 @@ export interface DashboardSummary {
   fieldTeamTargetSales: number;
   fieldTeamExcessSales: number;
   fieldTeamIncentiveRatio: number;
+  salesTeamLaborCost: number;
+  salesTeamTargetSales: number;
+  salesTeamExcessSales: number;
+  salesTeamIncentiveRatio: number;
+  salesTeamLaborCostRatio: number;
+  salesTeamIncentive: number;
 }
