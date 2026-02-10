@@ -32,10 +32,12 @@ interface SummaryData {
   designTeamTargetSales: number;
   designTeamExcessSales: number;
   designTeamIncentiveRatio: number;
+  designTeamLaborCostRatio: number;
   fieldTeamLaborCost: number;
   fieldTeamTargetSales: number;
   fieldTeamExcessSales: number;
   fieldTeamIncentiveRatio: number;
+  fieldTeamLaborCostRatio: number;
 }
 
 interface ChartItem {
@@ -210,6 +212,10 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">인건비율</span>
+                <span className="font-bold">{summary.designTeamLaborCostRatio}%</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">인건비</span>
                 <span className="font-bold">{summary.designTeamLaborCost.toLocaleString()}원</span>
               </div>
@@ -235,6 +241,10 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-semibold">현장팀</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">인건비율</span>
+                <span className="font-bold">{summary.fieldTeamLaborCostRatio}%</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">인건비</span>
                 <span className="font-bold">{summary.fieldTeamLaborCost.toLocaleString()}원</span>
