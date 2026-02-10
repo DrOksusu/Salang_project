@@ -33,15 +33,27 @@ export function verifyToken(token: string): JwtPayload {
 }
 
 export async function getAuthUser(request: NextRequest): Promise<JwtPayload | null> {
+  // 1. Authorization 헤더 확인
   const authHeader = request.headers.get("authorization");
-  if (!authHeader?.startsWith("Bearer ")) return null;
-
-  try {
-    const token = authHeader.slice(7);
-    return verifyToken(token);
-  } catch {
-    return null;
+  if (authHeader?.startsWith("Bearer ")) {
+    try {
+      return verifyToken(authHeader.slice(7));
+    } catch {
+      // fall through to cookie check
+    }
   }
+
+  // 2. 쿠키 확인
+  const cookieToken = request.cookies.get("token")?.value;
+  if (cookieToken) {
+    try {
+      return verifyToken(cookieToken);
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 export async function requireAdmin(request: NextRequest): Promise<JwtPayload | null> {
