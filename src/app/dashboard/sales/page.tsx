@@ -19,6 +19,8 @@ interface Settings {
   id: number;
   labor_cost_ratio: number;
   incentive_ratio: number;
+  design_team_labor_cost_ratio: number;
+  field_team_labor_cost_ratio: number;
 }
 
 interface SummaryData {
@@ -79,10 +81,18 @@ export default function SalesPage() {
 
   const laborCostRatio = settings ? Number(settings.labor_cost_ratio) : 0;
   const incentiveRatio = settings ? Number(settings.incentive_ratio) : 0;
+  const designTeamLaborCostRatio = settings ? Number(settings.design_team_labor_cost_ratio) : 0;
+  const fieldTeamLaborCostRatio = settings ? Number(settings.field_team_labor_cost_ratio) : 0;
   const targetSales =
     laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
   const excessSales = actualSales - targetSales;
   const incentiveTotal = Math.max(0, excessSales) * (incentiveRatio / 100);
+  const designTeamIncentive = laborCostRatio > 0
+    ? incentiveTotal * (designTeamLaborCostRatio / laborCostRatio)
+    : 0;
+  const fieldTeamIncentive = laborCostRatio > 0
+    ? incentiveTotal * (fieldTeamLaborCostRatio / laborCostRatio)
+    : 0;
 
   const handleSave = async () => {
     try {
@@ -217,6 +227,29 @@ export default function SalesPage() {
               <CardContent>
                 <p className="text-xl font-bold">
                   {Math.round(incentiveTotal).toLocaleString()}원
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">디자인팀 인센티브</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-bold">
+                  {Math.round(designTeamIncentive).toLocaleString()}원
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">현장팀 인센티브</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-bold">
+                  {Math.round(fieldTeamIncentive).toLocaleString()}원
                 </p>
               </CardContent>
             </Card>

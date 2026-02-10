@@ -16,6 +16,8 @@ export interface Settings {
   id: number;
   labor_cost_ratio: number;
   incentive_ratio: number;
+  design_team_labor_cost_ratio: number;
+  field_team_labor_cost_ratio: number;
   updated_at: string;
 }
 
@@ -59,6 +61,10 @@ export interface DashboardSummary {
   actualSales: number;
   excessSales: number;
   incentiveTotal: number;
+  designTeamIncentive: number;
+  fieldTeamIncentive: number;
   laborCostRatio: number;
   incentiveRatio: number;
+  designTeamLaborCostRatio: number;
+  fieldTeamLaborCostRatio: number;
 }

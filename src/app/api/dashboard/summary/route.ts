@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // settings 조회
     const [settingsRows] = await pool.query<RowDataPacket[]>(
-      "SELECT labor_cost_ratio, incentive_ratio FROM settings LIMIT 1"
+      "SELECT labor_cost_ratio, incentive_ratio, design_team_labor_cost_ratio, field_team_labor_cost_ratio FROM settings LIMIT 1"
     );
 
     if (settingsRows.length === 0) {
@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
 
     const laborCostRatio = Number(settingsRows[0].labor_cost_ratio);
     const incentiveRatio = Number(settingsRows[0].incentive_ratio);
+    const designTeamLaborCostRatio = Number(settingsRows[0].design_team_labor_cost_ratio);
+    const fieldTeamLaborCostRatio = Number(settingsRows[0].field_team_labor_cost_ratio);
 
     // 해당 월 전체 급여 합산
     const [salaryRows] = await pool.query<RowDataPacket[]>(
@@ -59,6 +61,14 @@ export async function GET(request: NextRequest) {
     const excessSales = Math.max(0, actualSales - targetSales);
     const incentiveTotal = excessSales * (incentiveRatio / 100);
 
+    // 팀별 인센티브 = 인센티브 총액 × (팀 인건비율 / 전체 인건비율)
+    const designTeamIncentive = laborCostRatio > 0
+      ? incentiveTotal * (designTeamLaborCostRatio / laborCostRatio)
+      : 0;
+    const fieldTeamIncentive = laborCostRatio > 0
+      ? incentiveTotal * (fieldTeamLaborCostRatio / laborCostRatio)
+      : 0;
+
     return NextResponse.json({
       success: true,
       data: {
@@ -69,9 +79,13 @@ export async function GET(request: NextRequest) {
         actualSales,
         excessSales,
         incentiveTotal,
+        designTeamIncentive,
+        fieldTeamIncentive,
         distributedIncentive,
         laborCostRatio,
         incentiveRatio,
+        designTeamLaborCostRatio,
+        fieldTeamLaborCostRatio,
       },
     });
   } catch (error) {

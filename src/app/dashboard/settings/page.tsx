@@ -12,6 +12,8 @@ interface SettingsData {
   id: number;
   labor_cost_ratio: number;
   incentive_ratio: number;
+  design_team_labor_cost_ratio: number;
+  field_team_labor_cost_ratio: number;
   updated_at: string;
 }
 
@@ -24,6 +26,8 @@ interface ApiResponse<T> {
 export default function SettingsPage() {
   const [laborCostRatio, setLaborCostRatio] = useState("");
   const [incentiveRatio, setIncentiveRatio] = useState("");
+  const [designTeamRatio, setDesignTeamRatio] = useState("");
+  const [fieldTeamRatio, setFieldTeamRatio] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
@@ -35,6 +39,8 @@ export default function SettingsPage() {
         if (res.success && res.data) {
           setLaborCostRatio(String(res.data.labor_cost_ratio));
           setIncentiveRatio(String(res.data.incentive_ratio));
+          setDesignTeamRatio(String(res.data.design_team_labor_cost_ratio));
+          setFieldTeamRatio(String(res.data.field_team_labor_cost_ratio));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "설정을 불러올 수 없습니다.";
@@ -53,6 +59,8 @@ export default function SettingsPage() {
       const res = await api.put<ApiResponse<SettingsData>>("/api/settings", {
         labor_cost_ratio: Number(laborCostRatio),
         incentive_ratio: Number(incentiveRatio),
+        design_team_labor_cost_ratio: Number(designTeamRatio),
+        field_team_labor_cost_ratio: Number(fieldTeamRatio),
       });
       if (res.success) {
         toast({ title: "성공", description: "설정이 저장되었습니다." });
@@ -107,6 +115,45 @@ export default function SettingsPage() {
               value={incentiveRatio}
               onChange={(e) => setIncentiveRatio(e.target.value)}
               placeholder="예: 10"
+            />
+          </div>
+
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "저장 중..." : "저장"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card className="max-w-lg">
+        <CardHeader>
+          <CardTitle>팀별 인건비율 설정</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="designTeamRatio">디자인팀 인건비율 (%)</Label>
+            <Input
+              id="designTeamRatio"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={designTeamRatio}
+              onChange={(e) => setDesignTeamRatio(e.target.value)}
+              placeholder="예: 20"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="fieldTeamRatio">현장팀 인건비율 (%)</Label>
+            <Input
+              id="fieldTeamRatio"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={fieldTeamRatio}
+              onChange={(e) => setFieldTeamRatio(e.target.value)}
+              placeholder="예: 20"
             />
           </div>
 

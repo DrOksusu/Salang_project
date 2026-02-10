@@ -42,6 +42,8 @@ interface SummaryData {
   actualSales: number;
   excessSales: number;
   incentiveTotal: number;
+  designTeamIncentive: number;
+  fieldTeamIncentive: number;
   distributedIncentive: number;
 }
 
@@ -54,6 +56,8 @@ export default function IncentivePage() {
     {}
   );
   const [incentiveTotal, setIncentiveTotal] = useState(0);
+  const [designTeamIncentive, setDesignTeamIncentive] = useState(0);
+  const [fieldTeamIncentive, setFieldTeamIncentive] = useState(0);
   const [loading, setLoading] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
 
@@ -71,6 +75,8 @@ export default function IncentivePage() {
       ]);
 
       setIncentiveTotal(Math.round(summaryRes.data.incentiveTotal));
+      setDesignTeamIncentive(Math.round(summaryRes.data.designTeamIncentive));
+      setFieldTeamIncentive(Math.round(summaryRes.data.fieldTeamIncentive));
 
       const activeEmployees = empRes.data.filter(
         (e) => e.is_active === true || e.is_active === 1
@@ -189,16 +195,38 @@ export default function IncentivePage() {
         <div className="text-muted-foreground">로딩 중...</div>
       ) : (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle>인센티브 총액</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                {incentiveTotal.toLocaleString()}원
-              </p>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>인센티브 총액</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">
+                  {incentiveTotal.toLocaleString()}원
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm text-muted-foreground">디자인팀 인센티브</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-bold">
+                  {designTeamIncentive.toLocaleString()}원
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm text-muted-foreground">현장팀 인센티브</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-bold">
+                  {fieldTeamIncentive.toLocaleString()}원
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
           <Table>
             <TableHeader>
