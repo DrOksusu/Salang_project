@@ -152,11 +152,14 @@ export default function SalesPage() {
             <CardContent>
               <div className="flex items-center gap-4">
                 <Input
-                  type="number"
-                  value={actualSales}
-                  onChange={(e) => setActualSales(Number(e.target.value) || 0)}
+                  type="text"
+                  inputMode="numeric"
+                  value={actualSales.toLocaleString()}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/,/g, "");
+                    setActualSales(Number(raw) || 0);
+                  }}
                   className="w-64 text-lg font-bold h-12"
-                  min={0}
                 />
                 <span className="text-lg">원</span>
                 <Button onClick={handleSave}>저장</Button>
@@ -167,7 +170,7 @@ export default function SalesPage() {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">전체 인건비</CardTitle>
+                <CardTitle className="text-sm">월 인건비</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xl font-bold">
@@ -185,7 +188,7 @@ export default function SalesPage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">목표매출</CardTitle>
+                <CardTitle className="text-sm">월 목표매출</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xl font-bold">

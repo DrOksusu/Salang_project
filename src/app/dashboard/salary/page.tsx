@@ -22,6 +22,7 @@ interface Employee {
   email: string;
   role: string;
   position: string | null;
+  team: string | null;
   is_active: boolean | number;
 }
 
@@ -105,6 +106,19 @@ export default function SalaryPage() {
   const targetSales =
     laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
 
+  // 팀별 그룹핑
+  const teamGroups = employees.reduce<Record<string, Employee[]>>((acc, emp) => {
+    const team = emp.team || "미지정";
+    if (!acc[team]) acc[team] = [];
+    acc[team].push(emp);
+    return acc;
+  }, {});
+
+  const teamNames = Object.keys(teamGroups);
+
+  const getTeamTotal = (team: string) =>
+    teamGroups[team].reduce((sum, emp) => sum + (salaries[emp.id] ?? 0), 0);
+
   const handleSave = async () => {
     try {
       const salaryArray = Object.entries(salaries).map(([userId, amount]) => ({
@@ -178,29 +192,52 @@ export default function SalaryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees.map((emp) => (
-                <TableRow key={emp.id}>
-                  <TableCell className="font-medium">{emp.name}</TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={salaries[emp.id] ?? 0}
-                      onChange={(e) =>
-                        handleSalaryChange(emp.id, e.target.value)
-                      }
-                      className="w-48"
-                      min={0}
-                    />
-                  </TableCell>
-                </TableRow>
+              {teamNames.map((team) => (
+                <>
+                  <TableRow key={`team-${team}`} className="bg-muted/50">
+                    <TableCell colSpan={2} className="font-bold text-sm">
+                      {team}
+                    </TableCell>
+                  </TableRow>
+                  {teamGroups[team].map((emp) => (
+                    <TableRow key={emp.id}>
+                      <TableCell className="font-medium pl-6">{emp.name}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          value={(salaries[emp.id] ?? 0).toLocaleString()}
+                          onChange={(e) =>
+                            handleSalaryChange(emp.id, e.target.value.replace(/,/g, ""))
+                          }
+                          className="w-48"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow key={`subtotal-${team}`} className="border-b-2">
+                    <TableCell className="pl-6 text-sm font-semibold text-muted-foreground">
+                      {team} 소계
+                    </TableCell>
+                    <TableCell className="text-sm font-semibold">
+                      {getTeamTotal(team).toLocaleString()}원
+                    </TableCell>
+                  </TableRow>
+                </>
               ))}
+              <TableRow className="bg-muted/30">
+                <TableCell className="font-bold">전체 합계</TableCell>
+                <TableCell className="font-bold">
+                  {totalLaborCost.toLocaleString()}원
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
 
           <div className="grid grid-cols-3 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">전체 인건비 합계</CardTitle>
+                <CardTitle className="text-sm">월 인건비 합계</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">
@@ -218,7 +255,7 @@ export default function SalaryPage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">목표매출</CardTitle>
+                <CardTitle className="text-sm">월 목표매출</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold">

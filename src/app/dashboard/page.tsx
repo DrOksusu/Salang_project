@@ -130,7 +130,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">전체 인건비</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">월 인건비</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-xl font-bold">
@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">목표매출</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">월 목표매출</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-xl font-bold">
@@ -214,7 +214,7 @@ export default function DashboardPage() {
                   formatter={(value: number | undefined) => (value ?? 0).toLocaleString() + "원"}
                 />
                 <Legend />
-                <Bar dataKey="targetSales" name="목표매출" fill="#d4c8bc" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="targetSales" name="월 목표매출" fill="#d4c8bc" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="actualSales" name="실제매출" fill="#a08d7d" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

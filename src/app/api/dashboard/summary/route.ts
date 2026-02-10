@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     );
     const distributedIncentive = Number(incentiveRows[0].total);
 
-    // 계산
+    // 계산: 월 목표매출 = 월 인건비 / (인건비율/100)
     const targetSales = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
     const excessSales = Math.max(0, actualSales - targetSales);
     const incentiveTotal = excessSales * (incentiveRatio / 100);
