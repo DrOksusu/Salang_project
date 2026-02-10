@@ -17,7 +17,7 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const { name, role, position, hire_date, is_active, password } = await request.json();
+    const { name, role, position, team, hire_date, is_active, password } = await request.json();
 
     const [existing] = await pool.query<RowDataPacket[]>(
       "SELECT id FROM users WHERE id = ?",
@@ -45,6 +45,10 @@ export async function PUT(
     if (position !== undefined) {
       fields.push("position = ?");
       values.push(position);
+    }
+    if (team !== undefined) {
+      fields.push("team = ?");
+      values.push(team);
     }
     if (hire_date !== undefined) {
       fields.push("hire_date = ?");
@@ -74,7 +78,7 @@ export async function PUT(
     );
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, email, name, role, position, hire_date, is_active FROM users WHERE id = ?",
+      "SELECT id, email, name, role, position, team, hire_date, is_active FROM users WHERE id = ?",
       [id]
     );
 

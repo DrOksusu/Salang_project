@@ -5,6 +5,7 @@ export interface User {
   password: string;
   role: "admin" | "employee";
   position: string | null;
+  team: string | null;
   hire_date: string | null;
   is_active: boolean;
   created_at: string;

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, email, name, role, position, hire_date, is_active FROM users ORDER BY id ASC"
+      "SELECT id, email, name, role, position, team, hire_date, is_active FROM users ORDER BY id ASC"
     );
 
     return NextResponse.json({ success: true, data: rows });
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, name, password, role, position, hire_date } = await request.json();
+    const { email, name, password, role, position, team, hire_date } = await request.json();
 
     if (!email || !name || !password) {
       return NextResponse.json(
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hashPassword(password);
 
     const [result] = await pool.query<ResultSetHeader>(
-      "INSERT INTO users (email, name, password, role, position, hire_date) VALUES (?, ?, ?, ?, ?, ?)",
-      [email, name, hashedPassword, role || "employee", position || null, hire_date || null]
+      "INSERT INTO users (email, name, password, role, position, team, hire_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [email, name, hashedPassword, role || "employee", position || null, team || null, hire_date || null]
     );
 
     return NextResponse.json(
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
           name,
           role: role || "employee",
           position: position || null,
+          team: team || null,
           hire_date: hire_date || null,
           is_active: true,
         },

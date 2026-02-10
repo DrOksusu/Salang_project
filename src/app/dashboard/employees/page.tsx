@@ -17,11 +17,14 @@ import {
 } from "@/components/ui/table";
 import { useToast, ToastContainer } from "@/components/ui/toast";
 
+const TEAMS = ["디자인팀", "현장팀", "경영진"] as const;
+
 interface Employee {
   id: number;
   name: string;
   email: string;
   position: string | null;
+  team: string | null;
   role: "admin" | "employee";
   hire_date: string | null;
   is_active: boolean | number;
@@ -38,6 +41,7 @@ const initialForm = {
   email: "",
   password: "",
   position: "",
+  team: "",
   role: "employee" as "admin" | "employee",
   hire_date: "",
 };
@@ -52,6 +56,7 @@ export default function EmployeesPage() {
   const [editForm, setEditForm] = useState({
     name: "",
     position: "",
+    team: "",
     role: "employee" as "admin" | "employee",
     hire_date: "",
   });
@@ -84,6 +89,7 @@ export default function EmployeesPage() {
         email: form.email,
         password: form.password,
         position: form.position || null,
+        team: form.team || null,
         role: form.role,
         hire_date: form.hire_date || null,
       });
@@ -106,6 +112,7 @@ export default function EmployeesPage() {
     setEditForm({
       name: emp.name,
       position: emp.position || "",
+      team: emp.team || "",
       role: emp.role,
       hire_date: emp.hire_date ? emp.hire_date.split("T")[0] : "",
     });
@@ -120,6 +127,7 @@ export default function EmployeesPage() {
       const res = await api.put<ApiResponse<Employee>>(`/api/employees/${id}`, {
         name: editForm.name,
         position: editForm.position || null,
+        team: editForm.team || null,
         role: editForm.role,
         hire_date: editForm.hire_date || null,
       });
@@ -225,6 +233,19 @@ export default function EmployeesPage() {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="add-team">팀</Label>
+                <Select
+                  id="add-team"
+                  value={form.team}
+                  onChange={(e) => setForm({ ...form, team: e.target.value })}
+                >
+                  <option value="">선택</option>
+                  {TEAMS.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="add-role">역할</Label>
                 <Select
                   id="add-role"
@@ -264,6 +285,7 @@ export default function EmployeesPage() {
                 <TableHead>이름</TableHead>
                 <TableHead>이메일</TableHead>
                 <TableHead>직급</TableHead>
+                <TableHead>팀</TableHead>
                 <TableHead>역할</TableHead>
                 <TableHead>입사일</TableHead>
                 <TableHead>상태</TableHead>
@@ -273,7 +295,7 @@ export default function EmployeesPage() {
             <TableBody>
               {employees.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     등록된 직원이 없습니다.
                   </TableCell>
                 </TableRow>
@@ -302,6 +324,20 @@ export default function EmployeesPage() {
                             }
                             className="h-8"
                           />
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={editForm.team}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, team: e.target.value })
+                            }
+                            className="h-8"
+                          >
+                            <option value="">선택</option>
+                            {TEAMS.map((t) => (
+                              <option key={t} value={t}>{t}</option>
+                            ))}
+                          </Select>
                         </TableCell>
                         <TableCell>
                           <Select
@@ -360,6 +396,7 @@ export default function EmployeesPage() {
                         <TableCell className="font-medium">{emp.name}</TableCell>
                         <TableCell>{emp.email}</TableCell>
                         <TableCell>{emp.position || "-"}</TableCell>
+                        <TableCell>{emp.team || "-"}</TableCell>
                         <TableCell>
                           {emp.role === "admin" ? "관리자" : "직원"}
                         </TableCell>
