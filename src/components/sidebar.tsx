@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -43,17 +44,28 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
     } catch (error) {
       console.error("로그아웃 실패:", error);
     } finally {
+      localStorage.removeItem("token");
       router.push("/login");
     }
   };
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r bg-background">
+    <aside className="flex h-screen w-64 flex-col border-r border-border/50 bg-card">
       {/* 로고 */}
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="text-xl font-bold">
-          Salang
-        </Link>
+      <div className="flex h-20 items-center gap-3 border-b border-border/50 px-6">
+        <Image
+          src="/logo.jpg"
+          alt="살랑"
+          width={44}
+          height={44}
+          className="rounded-lg"
+        />
+        <div>
+          <span className="text-lg font-bold text-foreground">살랑</span>
+          <p className="text-[10px] tracking-wider text-muted-foreground">
+            INTERIOR DESIGN
+          </p>
+        </div>
       </div>
 
       {/* 메뉴 */}
@@ -70,10 +82,10 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -84,10 +96,10 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
       </nav>
 
       {/* 로그아웃 */}
-      <div className="border-t p-4">
+      <div className="border-t border-border/50 p-4">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
         >
           <LogOut className="h-4 w-4" />
           로그아웃

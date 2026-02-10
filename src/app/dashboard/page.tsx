@@ -214,8 +214,8 @@ export default function DashboardPage() {
                   formatter={(value: number | undefined) => (value ?? 0).toLocaleString() + "원"}
                 />
                 <Legend />
-                <Bar dataKey="targetSales" name="목표매출" fill="#9ca3af" />
-                <Bar dataKey="actualSales" name="실제매출" fill="#3b82f6" />
+                <Bar dataKey="targetSales" name="목표매출" fill="#d4c8bc" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="actualSales" name="실제매출" fill="#a08d7d" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
