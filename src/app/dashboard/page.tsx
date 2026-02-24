@@ -20,27 +20,28 @@ interface SummaryData {
   year: number;
   month: number;
   totalLaborCost: number;
-  targetSales: number;
   actualSales: number;
-  excessSales: number;
+  actualProfit: number;
+  targetProfit: number;
+  excessProfit: number;
   incentiveTotal: number;
   designTeamIncentive: number;
   fieldTeamIncentive: number;
   laborCostRatio: number;
   incentiveRatio: number;
   designTeamLaborCost: number;
-  designTeamTargetSales: number;
-  designTeamExcessSales: number;
+  designTeamTargetProfit: number;
+  designTeamExcessProfit: number;
   designTeamIncentiveRatio: number;
   designTeamLaborCostRatio: number;
   fieldTeamLaborCost: number;
-  fieldTeamTargetSales: number;
-  fieldTeamExcessSales: number;
+  fieldTeamTargetProfit: number;
+  fieldTeamExcessProfit: number;
   fieldTeamIncentiveRatio: number;
   fieldTeamLaborCostRatio: number;
   salesTeamLaborCost: number;
-  salesTeamTargetSales: number;
-  salesTeamExcessSales: number;
+  salesTeamTargetProfit: number;
+  salesTeamExcessProfit: number;
   salesTeamIncentiveRatio: number;
   salesTeamLaborCostRatio: number;
   salesTeamIncentive: number;
@@ -50,8 +51,8 @@ interface ChartItem {
   year: number;
   month: number;
   totalLaborCost: number;
-  targetSales: number;
-  actualSales: number;
+  targetProfit: number;
+  actualProfit: number;
 }
 
 interface ApiResponse<T> {
@@ -160,41 +161,41 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">월 목표매출</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">목표영업이익</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-base md:text-xl font-bold">
-                {summary.targetSales.toLocaleString()}원
+                {Math.round(summary.targetProfit).toLocaleString()}원
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">실제매출</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">실제영업이익</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-base md:text-xl font-bold">
-                {summary.actualSales.toLocaleString()}원
+                {summary.actualProfit.toLocaleString()}원
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">초과매출</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">초과영업이익</CardTitle>
             </CardHeader>
             <CardContent>
               <p
                 className={`text-xl font-bold ${
-                  summary.excessSales > 0
+                  summary.excessProfit > 0
                     ? "text-green-500"
-                    : summary.excessSales < 0
+                    : summary.excessProfit < 0
                     ? "text-red-500"
                     : ""
                 }`}
               >
-                {summary.excessSales.toLocaleString()}원
+                {Math.round(summary.excessProfit).toLocaleString()}원
               </p>
             </CardContent>
           </Card>
@@ -226,13 +227,13 @@ export default function DashboardPage() {
                 <span className="font-bold">{summary.designTeamLaborCost.toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">목표매출</span>
-                <span className="font-bold">{Math.round(summary.designTeamTargetSales).toLocaleString()}원</span>
+                <span className="text-sm text-muted-foreground">목표영업이익</span>
+                <span className="font-bold">{Math.round(summary.designTeamTargetProfit).toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">초과매출</span>
-                <span className={`font-bold ${summary.designTeamExcessSales > 0 ? "text-green-500" : ""}`}>
-                  {Math.round(summary.designTeamExcessSales).toLocaleString()}원
+                <span className="text-sm text-muted-foreground">초과영업이익</span>
+                <span className={`font-bold ${summary.designTeamExcessProfit > 0 ? "text-green-500" : ""}`}>
+                  {Math.round(summary.designTeamExcessProfit).toLocaleString()}원
                 </span>
               </div>
               <div className="flex justify-between">
@@ -256,13 +257,13 @@ export default function DashboardPage() {
                 <span className="font-bold">{summary.fieldTeamLaborCost.toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">목표매출</span>
-                <span className="font-bold">{Math.round(summary.fieldTeamTargetSales).toLocaleString()}원</span>
+                <span className="text-sm text-muted-foreground">목표영업이익</span>
+                <span className="font-bold">{Math.round(summary.fieldTeamTargetProfit).toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">초과매출</span>
-                <span className={`font-bold ${summary.fieldTeamExcessSales > 0 ? "text-green-500" : ""}`}>
-                  {Math.round(summary.fieldTeamExcessSales).toLocaleString()}원
+                <span className="text-sm text-muted-foreground">초과영업이익</span>
+                <span className={`font-bold ${summary.fieldTeamExcessProfit > 0 ? "text-green-500" : ""}`}>
+                  {Math.round(summary.fieldTeamExcessProfit).toLocaleString()}원
                 </span>
               </div>
               <div className="flex justify-between">
@@ -286,13 +287,13 @@ export default function DashboardPage() {
                 <span className="font-bold">{summary.salesTeamLaborCost.toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">목표매출</span>
-                <span className="font-bold">{Math.round(summary.salesTeamTargetSales).toLocaleString()}원</span>
+                <span className="text-sm text-muted-foreground">목표영업이익</span>
+                <span className="font-bold">{Math.round(summary.salesTeamTargetProfit).toLocaleString()}원</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">초과매출</span>
-                <span className={`font-bold ${summary.salesTeamExcessSales > 0 ? "text-green-500" : ""}`}>
-                  {Math.round(summary.salesTeamExcessSales).toLocaleString()}원
+                <span className="text-sm text-muted-foreground">초과영업이익</span>
+                <span className={`font-bold ${summary.salesTeamExcessProfit > 0 ? "text-green-500" : ""}`}>
+                  {Math.round(summary.salesTeamExcessProfit).toLocaleString()}원
                 </span>
               </div>
               <div className="flex justify-between">
@@ -307,7 +308,7 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>최근 12개월 매출 현황</CardTitle>
+          <CardTitle>최근 12개월 영업이익 현황</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -326,8 +327,8 @@ export default function DashboardPage() {
                   formatter={(value: number | undefined) => (value ?? 0).toLocaleString() + "원"}
                 />
                 <Legend />
-                <Bar dataKey="targetSales" name="월 목표매출" fill="#d4c8bc" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="actualSales" name="실제매출" fill="#a08d7d" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="targetProfit" name="목표영업이익" fill="#d4c8bc" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="actualProfit" name="실제영업이익" fill="#a08d7d" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, email, name, role FROM users WHERE id = ? AND is_active = TRUE",
+      "SELECT id, email, name, role, team FROM users WHERE id = ? AND is_active = TRUE",
       [authUser.userId]
     );
 

@@ -9,7 +9,8 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 export interface JwtPayload {
   userId: number;
   email: string;
-  role: "admin" | "employee";
+  role: "admin" | "team_leader" | "employee";
+  team: string | null;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -33,27 +34,42 @@ export function verifyToken(token: string): JwtPayload {
 }
 
 export async function getAuthUser(request: NextRequest): Promise<JwtPayload | null> {
+  let payload: JwtPayload | null = null;
+
   // 1. Authorization 헤더 확인
   const authHeader = request.headers.get("authorization");
   if (authHeader?.startsWith("Bearer ")) {
     try {
-      return verifyToken(authHeader.slice(7));
+      payload = verifyToken(authHeader.slice(7));
     } catch {
       // fall through to cookie check
     }
   }
 
   // 2. 쿠키 확인
-  const cookieToken = request.cookies.get("token")?.value;
-  if (cookieToken) {
-    try {
-      return verifyToken(cookieToken);
-    } catch {
-      return null;
+  if (!payload) {
+    const cookieToken = request.cookies.get("token")?.value;
+    if (cookieToken) {
+      try {
+        payload = verifyToken(cookieToken);
+      } catch {
+        return null;
+      }
     }
   }
 
-  return null;
+  if (!payload) return null;
+
+  // 기존 토큰에 team 필드가 없는 경우 DB에서 조회
+  if (payload.team === undefined) {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT team FROM users WHERE id = ? AND is_active = TRUE",
+      [payload.userId]
+    );
+    payload.team = rows.length > 0 ? rows[0].team : null;
+  }
+
+  return payload;
 }
 
 export async function requireAdmin(request: NextRequest): Promise<JwtPayload | null> {

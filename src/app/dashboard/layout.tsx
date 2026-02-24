@@ -8,7 +8,7 @@ interface UserInfo {
   id: number;
   name: string;
   email: string;
-  role: "admin" | "employee";
+  role: "admin" | "team_leader" | "employee";
 }
 
 export default function DashboardLayout({
@@ -33,6 +33,10 @@ export default function DashboardLayout({
 
         if (userInfo.role === "employee") {
           router.push("/mypage");
+          return;
+        }
+        if (userInfo.role === "team_leader") {
+          router.push("/teampage");
           return;
         }
 

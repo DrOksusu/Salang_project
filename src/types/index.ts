@@ -1,9 +1,11 @@
+export type UserRole = "admin" | "team_leader" | "employee";
+
 export interface User {
   id: number;
   email: string;
   name: string;
   password: string;
-  role: "admin" | "employee";
+  role: UserRole;
   position: string | null;
   team: string | null;
   hire_date: string | null;
@@ -22,6 +24,9 @@ export interface Settings {
   field_team_incentive_ratio: number;
   sales_team_labor_cost_ratio: number;
   sales_team_incentive_ratio: number;
+  design_team_margin_ratio: number;
+  field_team_margin_ratio: number;
+  sales_team_margin_ratio: number;
   updated_at: string;
 }
 
@@ -39,6 +44,17 @@ export interface MonthlySales {
   year: number;
   month: number;
   amount: number;
+  created_at: string;
+}
+
+export interface SalesEntry {
+  id: number;
+  year: number;
+  month: number;
+  sale_date: string;
+  amount: number;
+  profit: number;
+  description: string | null;
   created_at: string;
 }
 
@@ -61,9 +77,10 @@ export interface DashboardSummary {
   year: number;
   month: number;
   totalLaborCost: number;
-  targetSales: number;
   actualSales: number;
-  excessSales: number;
+  actualProfit: number;
+  targetProfit: number;
+  excessProfit: number;
   incentiveTotal: number;
   designTeamIncentive: number;
   fieldTeamIncentive: number;
@@ -72,16 +89,16 @@ export interface DashboardSummary {
   designTeamLaborCostRatio: number;
   fieldTeamLaborCostRatio: number;
   designTeamLaborCost: number;
-  designTeamTargetSales: number;
-  designTeamExcessSales: number;
+  designTeamTargetProfit: number;
+  designTeamExcessProfit: number;
   designTeamIncentiveRatio: number;
   fieldTeamLaborCost: number;
-  fieldTeamTargetSales: number;
-  fieldTeamExcessSales: number;
+  fieldTeamTargetProfit: number;
+  fieldTeamExcessProfit: number;
   fieldTeamIncentiveRatio: number;
   salesTeamLaborCost: number;
-  salesTeamTargetSales: number;
-  salesTeamExcessSales: number;
+  salesTeamTargetProfit: number;
+  salesTeamExcessProfit: number;
   salesTeamIncentiveRatio: number;
   salesTeamLaborCostRatio: number;
   salesTeamIncentive: number;

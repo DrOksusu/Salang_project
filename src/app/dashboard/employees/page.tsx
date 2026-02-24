@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { useToast, ToastContainer } from "@/components/ui/toast";
 
-const TEAMS = ["디자인팀", "현장팀", "경영진"] as const;
+const TEAMS = ["디자인팀", "현장팀", "영업팀", "경영진"] as const;
 
 interface Employee {
   id: number;
@@ -25,7 +25,7 @@ interface Employee {
   email: string;
   position: string | null;
   team: string | null;
-  role: "admin" | "employee";
+  role: "admin" | "team_leader" | "employee";
   hire_date: string | null;
   is_active: boolean | number;
 }
@@ -42,7 +42,7 @@ const initialForm = {
   password: "",
   position: "",
   team: "",
-  role: "employee" as "admin" | "employee",
+  role: "employee" as "admin" | "team_leader" | "employee",
   hire_date: "",
 };
 
@@ -57,7 +57,7 @@ export default function EmployeesPage() {
     name: "",
     position: "",
     team: "",
-    role: "employee" as "admin" | "employee",
+    role: "employee" as "admin" | "team_leader" | "employee",
     hire_date: "",
   });
   const { toasts, toast, dismissToast } = useToast();
@@ -251,10 +251,11 @@ export default function EmployeesPage() {
                   id="add-role"
                   value={form.role}
                   onChange={(e) =>
-                    setForm({ ...form, role: e.target.value as "admin" | "employee" })
+                    setForm({ ...form, role: e.target.value as "admin" | "team_leader" | "employee" })
                   }
                 >
                   <option value="employee">직원</option>
+                  <option value="team_leader">팀장</option>
                   <option value="admin">관리자</option>
                 </Select>
               </div>
@@ -345,12 +346,13 @@ export default function EmployeesPage() {
                             onChange={(e) =>
                               setEditForm({
                                 ...editForm,
-                                role: e.target.value as "admin" | "employee",
+                                role: e.target.value as "admin" | "team_leader" | "employee",
                               })
                             }
                             className="h-8"
                           >
                             <option value="employee">직원</option>
+                            <option value="team_leader">팀장</option>
                             <option value="admin">관리자</option>
                           </Select>
                         </TableCell>
@@ -398,7 +400,7 @@ export default function EmployeesPage() {
                         <TableCell>{emp.position || "-"}</TableCell>
                         <TableCell>{emp.team || "-"}</TableCell>
                         <TableCell>
-                          {emp.role === "admin" ? "관리자" : "직원"}
+                          {emp.role === "admin" ? "관리자" : emp.role === "team_leader" ? "팀장" : "직원"}
                         </TableCell>
                         <TableCell>{formatDate(emp.hire_date)}</TableCell>
                         <TableCell>

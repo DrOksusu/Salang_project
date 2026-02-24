@@ -26,6 +26,9 @@ interface SettingsData {
   field_team_incentive_ratio: number;
   sales_team_labor_cost_ratio: number;
   sales_team_incentive_ratio: number;
+  design_team_margin_ratio: number;
+  field_team_margin_ratio: number;
+  sales_team_margin_ratio: number;
   updated_at: string;
 }
 
@@ -44,6 +47,9 @@ export default function SettingsPage() {
   const [fieldTeamIncentiveRatio, setFieldTeamIncentiveRatio] = useState("");
   const [salesTeamRatio, setSalesTeamRatio] = useState("");
   const [salesTeamIncentiveRatio, setSalesTeamIncentiveRatio] = useState("");
+  const [designTeamMarginRatio, setDesignTeamMarginRatio] = useState("");
+  const [fieldTeamMarginRatio, setFieldTeamMarginRatio] = useState("");
+  const [salesTeamMarginRatio, setSalesTeamMarginRatio] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
@@ -61,6 +67,9 @@ export default function SettingsPage() {
           setFieldTeamIncentiveRatio(String(res.data.field_team_incentive_ratio));
           setSalesTeamRatio(String(res.data.sales_team_labor_cost_ratio));
           setSalesTeamIncentiveRatio(String(res.data.sales_team_incentive_ratio));
+          setDesignTeamMarginRatio(String(res.data.design_team_margin_ratio));
+          setFieldTeamMarginRatio(String(res.data.field_team_margin_ratio));
+          setSalesTeamMarginRatio(String(res.data.sales_team_margin_ratio));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "설정을 불러올 수 없습니다.";
@@ -85,6 +94,9 @@ export default function SettingsPage() {
         field_team_incentive_ratio: Number(fieldTeamIncentiveRatio),
         sales_team_labor_cost_ratio: Number(salesTeamRatio),
         sales_team_incentive_ratio: Number(salesTeamIncentiveRatio),
+        design_team_margin_ratio: Number(designTeamMarginRatio),
+        field_team_margin_ratio: Number(fieldTeamMarginRatio),
+        sales_team_margin_ratio: Number(salesTeamMarginRatio),
       });
       if (res.success) {
         toast({ title: "성공", description: "설정이 저장되었습니다." });
@@ -158,6 +170,7 @@ export default function SettingsPage() {
               <TableRow>
                 <TableHead className="w-20 md:w-28">팀</TableHead>
                 <TableHead>인건비율 (%)</TableHead>
+                <TableHead>마진율 (%)</TableHead>
                 <TableHead>인센티브율 (%)</TableHead>
               </TableRow>
             </TableHeader>
@@ -172,6 +185,17 @@ export default function SettingsPage() {
                     max="100"
                     value={designTeamRatio}
                     onChange={(e) => setDesignTeamRatio(e.target.value)}
+                    className="w-20 md:w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={designTeamMarginRatio}
+                    onChange={(e) => setDesignTeamMarginRatio(e.target.value)}
                     className="w-20 md:w-28"
                   />
                 </TableCell>
@@ -206,6 +230,17 @@ export default function SettingsPage() {
                     step="0.1"
                     min="0"
                     max="100"
+                    value={fieldTeamMarginRatio}
+                    onChange={(e) => setFieldTeamMarginRatio(e.target.value)}
+                    className="w-20 md:w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
                     value={fieldTeamIncentiveRatio}
                     onChange={(e) => setFieldTeamIncentiveRatio(e.target.value)}
                     className="w-20 md:w-28"
@@ -222,6 +257,17 @@ export default function SettingsPage() {
                     max="100"
                     value={salesTeamRatio}
                     onChange={(e) => setSalesTeamRatio(e.target.value)}
+                    className="w-20 md:w-28"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={salesTeamMarginRatio}
+                    onChange={(e) => setSalesTeamMarginRatio(e.target.value)}
                     className="w-20 md:w-28"
                   />
                 </TableCell>

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       [email, name, hashedPassword, role]
     );
 
-    const token = generateToken({ userId: result.insertId, email, role });
+    const token = generateToken({ userId: result.insertId, email, role, team: null });
 
     const response = NextResponse.json(
       {

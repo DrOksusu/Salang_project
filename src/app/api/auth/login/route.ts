@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT id, email, name, password, role FROM users WHERE email = ? AND is_active = TRUE",
+      "SELECT id, email, name, password, role, team FROM users WHERE email = ? AND is_active = TRUE",
       [email]
     );
 
@@ -36,13 +36,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = generateToken({ userId: user.id, email: user.email, role: user.role });
+    const token = generateToken({ userId: user.id, email: user.email, role: user.role, team: user.team || null });
 
     const response = NextResponse.json({
       success: true,
       data: {
         token,
-        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+        user: { id: user.id, email: user.email, name: user.name, role: user.role, team: user.team || null },
       },
     });
 

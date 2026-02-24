@@ -27,7 +27,20 @@ export async function GET(request: NextRequest) {
     let query: string;
     let queryParams: (string | number)[];
 
-    if (authUser.role === "admin") {
+    const teamFilter = searchParams.get("team");
+
+    if (authUser.role === "admin" && teamFilter) {
+      // admin이 특정 팀 필터 요청
+      query = `
+        SELECT mi.id, mi.user_id, mi.year, mi.month, mi.amount, mi.created_at,
+               u.name AS user_name, u.email AS user_email
+        FROM monthly_incentive mi
+        JOIN users u ON mi.user_id = u.id
+        WHERE mi.year = ? AND mi.month = ? AND u.team = ?
+        ORDER BY u.name ASC
+      `;
+      queryParams = [year, month, teamFilter];
+    } else if (authUser.role === "admin") {
       query = `
         SELECT mi.id, mi.user_id, mi.year, mi.month, mi.amount, mi.created_at,
                u.name AS user_name, u.email AS user_email
@@ -37,6 +50,16 @@ export async function GET(request: NextRequest) {
         ORDER BY u.name ASC
       `;
       queryParams = [year, month];
+    } else if (authUser.role === "team_leader" && authUser.team) {
+      query = `
+        SELECT mi.id, mi.user_id, mi.year, mi.month, mi.amount, mi.created_at,
+               u.name AS user_name, u.email AS user_email
+        FROM monthly_incentive mi
+        JOIN users u ON mi.user_id = u.id
+        WHERE mi.year = ? AND mi.month = ? AND u.team = ?
+        ORDER BY u.name ASC
+      `;
+      queryParams = [year, month, authUser.team];
     } else {
       query = `
         SELECT mi.id, mi.user_id, mi.year, mi.month, mi.amount, mi.created_at,

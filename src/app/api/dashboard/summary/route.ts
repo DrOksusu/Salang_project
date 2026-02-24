@@ -46,12 +46,13 @@ export async function GET(request: NextRequest) {
     );
     const totalLaborCost = Number(salaryRows[0].total);
 
-    // 해당 월 매출 조회
+    // 해당 월 매출/영업이익 조회
     const [salesRows] = await pool.query<RowDataPacket[]>(
-      "SELECT COALESCE(amount, 0) AS amount FROM monthly_sales WHERE year = ? AND month = ?",
+      "SELECT COALESCE(amount, 0) AS amount, COALESCE(profit, 0) AS profit FROM monthly_sales WHERE year = ? AND month = ?",
       [year, month]
     );
     const actualSales = salesRows.length > 0 ? Number(salesRows[0].amount) : 0;
+    const actualProfit = salesRows.length > 0 ? Number(salesRows[0].profit) : 0;
 
     // 해당 월 인센티브 배분 합산
     const [incentiveRows] = await pool.query<RowDataPacket[]>(
@@ -79,10 +80,10 @@ export async function GET(request: NextRequest) {
       if (row.team === '영업팀') salesTeamLaborCost = Number(row.total);
     }
 
-    // 전사 계산: 월 목표매출 = 월 인건비 / (인건비율/100)
-    const targetSales = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
-    const excessSales = Math.max(0, actualSales - targetSales);
-    const incentiveTotal = excessSales * (incentiveRatio / 100);
+    // 전사 계산: 월 목표영업이익 = 월 인건비 / (인건비율/100)
+    const targetProfit = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
+    const excessProfit = Math.max(0, actualProfit - targetProfit);
+    const incentiveTotal = excessProfit * (incentiveRatio / 100);
 
     // 팀별 인센티브 = 인센티브 총액 × (팀 인건비율 / 전체 인건비율)
     const designTeamIncentive = laborCostRatio > 0
@@ -93,25 +94,25 @@ export async function GET(request: NextRequest) {
       : 0;
 
     // 디자인팀 독립 계산
-    const designTeamTargetSales = designTeamLaborCostRatio > 0
+    const designTeamTargetProfit = designTeamLaborCostRatio > 0
       ? designTeamLaborCost / (designTeamLaborCostRatio / 100)
       : 0;
-    const designTeamExcessSales = Math.max(0, actualSales - designTeamTargetSales);
-    const designTeamIndependentIncentive = designTeamExcessSales * (designTeamIncentiveRatio / 100);
+    const designTeamExcessProfit = Math.max(0, actualProfit - designTeamTargetProfit);
+    const designTeamIndependentIncentive = designTeamExcessProfit * (designTeamIncentiveRatio / 100);
 
     // 현장팀 독립 계산
-    const fieldTeamTargetSales = fieldTeamLaborCostRatio > 0
+    const fieldTeamTargetProfit = fieldTeamLaborCostRatio > 0
       ? fieldTeamLaborCost / (fieldTeamLaborCostRatio / 100)
       : 0;
-    const fieldTeamExcessSales = Math.max(0, actualSales - fieldTeamTargetSales);
-    const fieldTeamIndependentIncentive = fieldTeamExcessSales * (fieldTeamIncentiveRatio / 100);
+    const fieldTeamExcessProfit = Math.max(0, actualProfit - fieldTeamTargetProfit);
+    const fieldTeamIndependentIncentive = fieldTeamExcessProfit * (fieldTeamIncentiveRatio / 100);
 
     // 영업팀 독립 계산
-    const salesTeamTargetSales = salesTeamLaborCostRatio > 0
+    const salesTeamTargetProfit = salesTeamLaborCostRatio > 0
       ? salesTeamLaborCost / (salesTeamLaborCostRatio / 100)
       : 0;
-    const salesTeamExcessSales = Math.max(0, actualSales - salesTeamTargetSales);
-    const salesTeamIndependentIncentive = salesTeamExcessSales * (salesTeamIncentiveRatio / 100);
+    const salesTeamExcessProfit = Math.max(0, actualProfit - salesTeamTargetProfit);
+    const salesTeamIndependentIncentive = salesTeamExcessProfit * (salesTeamIncentiveRatio / 100);
 
     return NextResponse.json({
       success: true,
@@ -119,9 +120,10 @@ export async function GET(request: NextRequest) {
         year,
         month,
         totalLaborCost,
-        targetSales,
         actualSales,
-        excessSales,
+        actualProfit,
+        targetProfit,
+        excessProfit,
         incentiveTotal,
         designTeamIncentive: designTeamIndependentIncentive,
         fieldTeamIncentive: fieldTeamIndependentIncentive,
@@ -131,16 +133,16 @@ export async function GET(request: NextRequest) {
         designTeamLaborCostRatio,
         fieldTeamLaborCostRatio,
         designTeamLaborCost,
-        designTeamTargetSales,
-        designTeamExcessSales,
+        designTeamTargetProfit,
+        designTeamExcessProfit,
         designTeamIncentiveRatio,
         fieldTeamLaborCost,
-        fieldTeamTargetSales,
-        fieldTeamExcessSales,
+        fieldTeamTargetProfit,
+        fieldTeamExcessProfit,
         fieldTeamIncentiveRatio,
         salesTeamLaborCost,
-        salesTeamTargetSales,
-        salesTeamExcessSales,
+        salesTeamTargetProfit,
+        salesTeamExcessProfit,
         salesTeamIncentiveRatio,
         salesTeamLaborCostRatio,
         salesTeamIncentive: salesTeamIndependentIncentive,

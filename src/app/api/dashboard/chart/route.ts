@@ -51,9 +51,9 @@ export async function GET(request: NextRequest) {
       [startYear, startYear, startMonth, endYear, endYear, endMonth]
     );
 
-    // 월별 매출 조회
+    // 월별 매출/영업이익 조회
     const [salesRows] = await pool.query<RowDataPacket[]>(
-      `SELECT year, month, COALESCE(amount, 0) AS amount
+      `SELECT year, month, COALESCE(amount, 0) AS amount, COALESCE(profit, 0) AS profit
        FROM monthly_sales
        WHERE (year > ? OR (year = ? AND month >= ?))
          AND (year < ? OR (year = ? AND month <= ?))`,
@@ -66,24 +66,24 @@ export async function GET(request: NextRequest) {
       salaryMap.set(`${row.year}-${row.month}`, Number(row.total));
     }
 
-    const salesMap = new Map<string, number>();
+    const profitMap = new Map<string, number>();
     for (const row of salesRows) {
-      salesMap.set(`${row.year}-${row.month}`, Number(row.amount));
+      profitMap.set(`${row.year}-${row.month}`, Number(row.profit));
     }
 
     // 12개월 데이터 조립
     const chartData = months.map(({ year, month }) => {
       const key = `${year}-${month}`;
       const totalLaborCost = salaryMap.get(key) || 0;
-      const actualSales = salesMap.get(key) || 0;
-      const targetSales = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
+      const actualProfit = profitMap.get(key) || 0;
+      const targetProfit = laborCostRatio > 0 ? totalLaborCost / (laborCostRatio / 100) : 0;
 
       return {
         year,
         month,
         totalLaborCost,
-        targetSales,
-        actualSales,
+        targetProfit,
+        actualProfit,
       };
     });
 

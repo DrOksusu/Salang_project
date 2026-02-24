@@ -34,7 +34,14 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", data.data.token);
-      router.push("/dashboard");
+      const userRole = data.data.user?.role;
+      if (userRole === "team_leader") {
+        router.push("/teampage");
+      } else if (userRole === "employee") {
+        router.push("/mypage");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setError("서버 오류가 발생했습니다.");
     } finally {

@@ -9,9 +9,10 @@ interface UserInfo {
   name: string;
   email: string;
   role: "admin" | "team_leader" | "employee";
+  team: string | null;
 }
 
-export default function MyPageLayout({
+export default function TeamPageLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -30,6 +31,12 @@ export default function MyPageLayout({
         }
         const data = await res.json();
         const userInfo: UserInfo = data.data ?? data;
+
+        if (userInfo.role === "employee") {
+          router.push("/mypage");
+          return;
+        }
+
         setUser(userInfo);
       } catch {
         router.push("/login");
@@ -51,8 +58,8 @@ export default function MyPageLayout({
 
   return (
     <div className="flex h-screen">
-      <Sidebar role={user?.role === "team_leader" ? "team_leader" : "employee"} />
-      <main className="flex-1 overflow-auto p-8">{children}</main>
+      <Sidebar role={user?.role === "admin" ? "admin" : "team_leader"} />
+      <main className="flex-1 overflow-auto p-4 pt-14 md:pt-6 md:p-6 lg:p-8">{children}</main>
     </div>
   );
 }

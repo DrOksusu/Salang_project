@@ -38,24 +38,25 @@ interface SummaryData {
   totalLaborCost: number;
   laborCostRatio: number;
   incentiveRatio: number;
-  targetSales: number;
   actualSales: number;
-  excessSales: number;
+  actualProfit: number;
+  targetProfit: number;
+  excessProfit: number;
   incentiveTotal: number;
   designTeamIncentive: number;
   fieldTeamIncentive: number;
   distributedIncentive: number;
   designTeamLaborCost: number;
-  designTeamTargetSales: number;
-  designTeamExcessSales: number;
+  designTeamTargetProfit: number;
+  designTeamExcessProfit: number;
   designTeamIncentiveRatio: number;
   fieldTeamLaborCost: number;
-  fieldTeamTargetSales: number;
-  fieldTeamExcessSales: number;
+  fieldTeamTargetProfit: number;
+  fieldTeamExcessProfit: number;
   fieldTeamIncentiveRatio: number;
   salesTeamLaborCost: number;
-  salesTeamTargetSales: number;
-  salesTeamExcessSales: number;
+  salesTeamTargetProfit: number;
+  salesTeamExcessProfit: number;
   salesTeamIncentiveRatio: number;
   salesTeamLaborCostRatio: number;
   salesTeamIncentive: number;
@@ -232,13 +233,13 @@ export default function IncentivePage() {
                   <span className="font-bold">{(summaryData?.designTeamLaborCost ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">목표매출</span>
-                  <span className="font-bold">{Math.round(summaryData?.designTeamTargetSales ?? 0).toLocaleString()}원</span>
+                  <span className="text-sm text-muted-foreground">목표영업이익</span>
+                  <span className="font-bold">{Math.round(summaryData?.designTeamTargetProfit ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">초과매출</span>
-                  <span className={`font-bold ${(summaryData?.designTeamExcessSales ?? 0) > 0 ? "text-green-500" : ""}`}>
-                    {Math.round(summaryData?.designTeamExcessSales ?? 0).toLocaleString()}원
+                  <span className="text-sm text-muted-foreground">초과영업이익</span>
+                  <span className={`font-bold ${(summaryData?.designTeamExcessProfit ?? 0) > 0 ? "text-green-500" : ""}`}>
+                    {Math.round(summaryData?.designTeamExcessProfit ?? 0).toLocaleString()}원
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -257,13 +258,13 @@ export default function IncentivePage() {
                   <span className="font-bold">{(summaryData?.fieldTeamLaborCost ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">목표매출</span>
-                  <span className="font-bold">{Math.round(summaryData?.fieldTeamTargetSales ?? 0).toLocaleString()}원</span>
+                  <span className="text-sm text-muted-foreground">목표영업이익</span>
+                  <span className="font-bold">{Math.round(summaryData?.fieldTeamTargetProfit ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">초과매출</span>
-                  <span className={`font-bold ${(summaryData?.fieldTeamExcessSales ?? 0) > 0 ? "text-green-500" : ""}`}>
-                    {Math.round(summaryData?.fieldTeamExcessSales ?? 0).toLocaleString()}원
+                  <span className="text-sm text-muted-foreground">초과영업이익</span>
+                  <span className={`font-bold ${(summaryData?.fieldTeamExcessProfit ?? 0) > 0 ? "text-green-500" : ""}`}>
+                    {Math.round(summaryData?.fieldTeamExcessProfit ?? 0).toLocaleString()}원
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -282,13 +283,13 @@ export default function IncentivePage() {
                   <span className="font-bold">{(summaryData?.salesTeamLaborCost ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">목표매출</span>
-                  <span className="font-bold">{Math.round(summaryData?.salesTeamTargetSales ?? 0).toLocaleString()}원</span>
+                  <span className="text-sm text-muted-foreground">목표영업이익</span>
+                  <span className="font-bold">{Math.round(summaryData?.salesTeamTargetProfit ?? 0).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">초과매출</span>
-                  <span className={`font-bold ${(summaryData?.salesTeamExcessSales ?? 0) > 0 ? "text-green-500" : ""}`}>
-                    {Math.round(summaryData?.salesTeamExcessSales ?? 0).toLocaleString()}원
+                  <span className="text-sm text-muted-foreground">초과영업이익</span>
+                  <span className={`font-bold ${(summaryData?.salesTeamExcessProfit ?? 0) > 0 ? "text-green-500" : ""}`}>
+                    {Math.round(summaryData?.salesTeamExcessProfit ?? 0).toLocaleString()}원
                   </span>
                 </div>
                 <div className="flex justify-between">

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 interface SidebarProps {
-  role?: "admin" | "employee";
+  role?: "admin" | "team_leader" | "employee";
 }
 
 const adminMenuItems = [
@@ -28,7 +28,15 @@ const adminMenuItems = [
   { label: "급여 관리", href: "/dashboard/salary", icon: Wallet },
   { label: "매출 관리", href: "/dashboard/sales", icon: TrendingUp },
   { label: "인센티브", href: "/dashboard/incentive", icon: Gift },
+  { label: "팀 현황", href: "/teampage", icon: Users },
+  { label: "팀원 상세", href: "/teampage/members", icon: User },
   { label: "설정", href: "/dashboard/settings", icon: Settings },
+];
+
+const teamLeaderMenuItems = [
+  { label: "팀 현황", href: "/teampage", icon: LayoutDashboard },
+  { label: "팀원 상세", href: "/teampage/members", icon: Users },
+  { label: "마이페이지", href: "/mypage", icon: User },
 ];
 
 const employeeMenuItems = [
@@ -40,7 +48,12 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const menuItems = role === "employee" ? employeeMenuItems : adminMenuItems;
+  const menuItems =
+    role === "admin"
+      ? adminMenuItems
+      : role === "team_leader"
+      ? teamLeaderMenuItems
+      : employeeMenuItems;
 
   const handleLogout = async () => {
     try {
@@ -86,6 +99,8 @@ export default function Sidebar({ role = "admin" }: SidebarProps) {
           const isActive =
             item.href === "/dashboard"
               ? pathname === "/dashboard"
+              : item.href === "/teampage"
+              ? pathname === "/teampage"
               : pathname.startsWith(item.href);
 
           return (
