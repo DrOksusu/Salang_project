@@ -164,6 +164,7 @@ export default function TeamMembersPage() {
     };
 
     fetchYearData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentTeam, year]);
 
   if (!user) {

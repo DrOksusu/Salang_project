@@ -126,7 +126,7 @@ export default function MyPage() {
         });
 
         setMonthlyData(data);
-      } catch (error) {
+      } catch {
         toast({
           title: "오류",
           description: "데이터를 불러오는데 실패했습니다.",
@@ -138,6 +138,7 @@ export default function MyPage() {
     };
 
     fetchYearData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, year]);
 
   const yearOptions = Array.from({ length: 5 }, (_, i) => now.getFullYear() - 2 + i);

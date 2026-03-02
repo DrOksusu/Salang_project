@@ -173,6 +173,7 @@ export default function TeamPage() {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentTeam, year, month]);
 
   if (!user) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +77,7 @@ export default function IncentivePage() {
   const [loading, setLoading] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [summaryRes, empRes, incentiveRes] = await Promise.all([
@@ -108,7 +108,7 @@ export default function IncentivePage() {
         incentiveMap[i.user_id] = Number(i.amount);
       });
       setIncentives(incentiveMap);
-    } catch (error) {
+    } catch {
       toast({
         title: "오류",
         description: "데이터를 불러오는데 실패했습니다.",
@@ -117,11 +117,11 @@ export default function IncentivePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [year, month, toast]);
 
   useEffect(() => {
     fetchData();
-  }, [year, month]);
+  }, [fetchData]);
 
   const handleIncentiveChange = (userId: number, value: string) => {
     setIncentives((prev) => ({
@@ -161,7 +161,7 @@ export default function IncentivePage() {
         title: "저장 완료",
         description: "인센티브가 저장되었습니다.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "저장 실패",
         description: "인센티브 저장에 실패했습니다.",

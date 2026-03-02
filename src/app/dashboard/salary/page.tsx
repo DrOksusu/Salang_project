@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +51,7 @@ export default function SalaryPage() {
   const [loading, setLoading] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [empRes, salaryRes, settingsRes] = await Promise.all([
@@ -76,7 +76,7 @@ export default function SalaryPage() {
         salaryMap[s.user_id] = Number(s.amount);
       });
       setSalaries(salaryMap);
-    } catch (error) {
+    } catch {
       toast({
         title: "오류",
         description: "데이터를 불러오는데 실패했습니다.",
@@ -85,11 +85,11 @@ export default function SalaryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [year, month, toast]);
 
   useEffect(() => {
     fetchData();
-  }, [year, month]);
+  }, [fetchData]);
 
   const handleSalaryChange = (userId: number, value: string) => {
     setSalaries((prev) => ({
@@ -133,7 +133,7 @@ export default function SalaryPage() {
       });
 
       toast({ title: "저장 완료", description: "급여가 저장되었습니다." });
-    } catch (error) {
+    } catch {
       toast({
         title: "저장 실패",
         description: "급여 저장에 실패했습니다.",

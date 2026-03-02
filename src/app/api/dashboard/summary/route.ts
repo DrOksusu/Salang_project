@@ -85,14 +85,6 @@ export async function GET(request: NextRequest) {
     const excessProfit = Math.max(0, actualProfit - targetProfit);
     const incentiveTotal = excessProfit * (incentiveRatio / 100);
 
-    // 팀별 인센티브 = 인센티브 총액 × (팀 인건비율 / 전체 인건비율)
-    const designTeamIncentive = laborCostRatio > 0
-      ? incentiveTotal * (designTeamLaborCostRatio / laborCostRatio)
-      : 0;
-    const fieldTeamIncentive = laborCostRatio > 0
-      ? incentiveTotal * (fieldTeamLaborCostRatio / laborCostRatio)
-      : 0;
-
     // 디자인팀 독립 계산
     const designTeamTargetProfit = designTeamLaborCostRatio > 0
       ? designTeamLaborCost / (designTeamLaborCostRatio / 100)

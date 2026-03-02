@@ -11,8 +11,6 @@ export interface Toast {
   variant?: "default" | "destructive";
 }
 
-let toastListeners: Array<(toast: Toast) => void> = [];
-
 export function useToast() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 

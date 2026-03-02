@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +62,7 @@ export default function EmployeesPage() {
   });
   const { toasts, toast, dismissToast } = useToast();
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const res = await api.get<ApiResponse<Employee[]>>("/api/employees");
       if (res.success && res.data) {
@@ -74,11 +74,11 @@ export default function EmployeesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();

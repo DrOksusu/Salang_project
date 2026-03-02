@@ -89,6 +89,7 @@ export default function DashboardPage() {
     };
 
     fetchSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month]);
 
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function DashboardPage() {
     };
 
     fetchChart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formattedChartData = chartData.map((item) => ({

@@ -91,6 +91,7 @@ export default function ProfitPage() {
     };
 
     fetchSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month]);
 
   // 달성률 계산

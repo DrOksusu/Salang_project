@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,7 @@ export default function SalesPage() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
-  const [settings, setSettings] = useState<Settings | null>(null);
+  const [, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(false);
   const { toasts, toast, dismissToast } = useToast();
 
@@ -76,7 +76,7 @@ export default function SalesPage() {
   const [saleProfit, setSaleProfit] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [salesRes, summaryRes, settingsRes] = await Promise.all([
@@ -95,7 +95,7 @@ export default function SalesPage() {
       setTotalProfit(salesRes.data.totalProfit);
       setSummaryData(summaryRes.data);
       setSettings(settingsRes.data);
-    } catch (error) {
+    } catch {
       toast({
         title: "오류",
         description: "데이터를 불러오는데 실패했습니다.",
@@ -104,11 +104,11 @@ export default function SalesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [year, month, toast]);
 
   useEffect(() => {
     fetchData();
-  }, [year, month]);
+  }, [fetchData]);
 
   // 연/월 변경 시 날짜 입력 기본값 설정
   useEffect(() => {
@@ -157,7 +157,7 @@ export default function SalesPage() {
       setSaleProfit("");
       setSaleDescription("");
       fetchData();
-    } catch (error) {
+    } catch {
       toast({
         title: "추가 실패",
         description: "매출 추가에 실패했습니다.",
@@ -173,7 +173,7 @@ export default function SalesPage() {
       await api.delete(`/api/sales/${id}`);
       toast({ title: "삭제 완료", description: "매출이 삭제되었습니다." });
       fetchData();
-    } catch (error) {
+    } catch {
       toast({
         title: "삭제 실패",
         description: "매출 삭제에 실패했습니다.",
