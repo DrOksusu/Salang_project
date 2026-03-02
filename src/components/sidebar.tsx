@@ -38,10 +38,12 @@ const adminMenuItems = [
 const teamLeaderMenuItems = [
   { label: "팀 현황", href: "/teampage", icon: LayoutDashboard },
   { label: "팀원 상세", href: "/teampage/members", icon: Users },
+  { label: "영업이익 현황", href: "/dashboard/profit", icon: PieChart },
   { label: "마이페이지", href: "/mypage", icon: User },
 ];
 
 const employeeMenuItems = [
+  { label: "영업이익 현황", href: "/dashboard/profit", icon: PieChart },
   { label: "마이페이지", href: "/mypage", icon: User },
 ];
 

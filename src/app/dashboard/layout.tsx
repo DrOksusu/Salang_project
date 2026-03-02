@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/components/sidebar";
 
 interface UserInfo {
@@ -17,6 +17,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,13 +32,16 @@ export default function DashboardLayout({
         const data = await res.json();
         const userInfo: UserInfo = data.data ?? data;
 
-        if (userInfo.role === "employee") {
-          router.push("/mypage");
-          return;
-        }
-        if (userInfo.role === "team_leader") {
-          router.push("/teampage");
-          return;
+        // /dashboard/profit 경로는 비관리자(employee, team_leader)도 접근 허용
+        if (pathname !== "/dashboard/profit") {
+          if (userInfo.role === "employee") {
+            router.push("/mypage");
+            return;
+          }
+          if (userInfo.role === "team_leader") {
+            router.push("/teampage");
+            return;
+          }
         }
 
         setUser(userInfo);
@@ -49,7 +53,7 @@ export default function DashboardLayout({
     };
 
     fetchUser();
-  }, [router]);
+  }, [router, pathname]);
 
   if (loading) {
     return (
