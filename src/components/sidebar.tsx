@@ -16,6 +16,7 @@ import {
   User,
   Menu,
   X,
+  PieChart,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ const adminMenuItems = [
   { label: "직원 관리", href: "/dashboard/employees", icon: Users },
   { label: "급여 관리", href: "/dashboard/salary", icon: Wallet },
   { label: "매출 관리", href: "/dashboard/sales", icon: TrendingUp },
+  { label: "영업이익 현황", href: "/dashboard/profit", icon: PieChart },
   { label: "인센티브", href: "/dashboard/incentive", icon: Gift },
   { label: "팀 현황", href: "/teampage", icon: Users },
   { label: "팀원 상세", href: "/teampage/members", icon: User },
