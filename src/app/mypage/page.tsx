@@ -23,14 +23,6 @@ interface UserInfo {
   position?: string;
 }
 
-interface SalaryRecord {
-  id: number;
-  user_id: number;
-  year: number;
-  month: number;
-  amount: number;
-}
-
 interface IncentiveRecord {
   id: number;
   user_id: number;
@@ -39,18 +31,13 @@ interface IncentiveRecord {
   amount: number;
 }
 
-interface MonthlyData {
-  salary: number | null;
-  incentive: number | null;
-}
-
 export default function MyPage() {
   const router = useRouter();
   const now = new Date();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [year, setYear] = useState(now.getFullYear());
-  const [monthlyData, setMonthlyData] = useState<{
-    [month: number]: MonthlyData;
+  const [monthlyIncentive, setMonthlyIncentive] = useState<{
+    [month: number]: number | null;
   }>({});
   const [loading, setLoading] = useState(true);
   const { toasts, toast, dismissToast } = useToast();
@@ -75,18 +62,10 @@ export default function MyPage() {
     const fetchYearData = async () => {
       setLoading(true);
       try {
-        const data: { [month: number]: MonthlyData } = {};
+        const data: { [month: number]: number | null } = {};
         for (let m = 1; m <= 12; m++) {
-          data[m] = { salary: null, incentive: null };
+          data[m] = null;
         }
-
-        const salaryPromises = Array.from({ length: 12 }, (_, i) =>
-          api
-            .get<{ success: boolean; data: SalaryRecord[] }>(
-              `/api/salary?year=${year}&month=${i + 1}`
-            )
-            .catch(() => ({ success: false, data: [] as SalaryRecord[] }))
-        );
 
         const incentivePromises = Array.from({ length: 12 }, (_, i) =>
           api
@@ -96,22 +75,7 @@ export default function MyPage() {
             .catch(() => ({ success: false, data: [] as IncentiveRecord[] }))
         );
 
-        const [salaryResults, incentiveResults] = await Promise.all([
-          Promise.all(salaryPromises),
-          Promise.all(incentivePromises),
-        ]);
-
-        salaryResults.forEach((res, idx) => {
-          const m = idx + 1;
-          if (res.data && Array.isArray(res.data)) {
-            const myRecord = res.data.find(
-              (s) => Number(s.user_id) === user.id
-            );
-            if (myRecord) {
-              data[m].salary = Number(myRecord.amount);
-            }
-          }
-        });
+        const incentiveResults = await Promise.all(incentivePromises);
 
         incentiveResults.forEach((res, idx) => {
           const m = idx + 1;
@@ -120,12 +84,12 @@ export default function MyPage() {
               (i) => Number(i.user_id) === user.id
             );
             if (myRecord) {
-              data[m].incentive = Number(myRecord.amount);
+              data[m] = Number(myRecord.amount);
             }
           }
         });
 
-        setMonthlyData(data);
+        setMonthlyIncentive(data);
       } catch {
         toast({
           title: "오류",
@@ -143,15 +107,10 @@ export default function MyPage() {
 
   const yearOptions = Array.from({ length: 5 }, (_, i) => now.getFullYear() - 2 + i);
 
-  const annualSalary = Object.values(monthlyData).reduce(
-    (sum, d) => sum + (d.salary ?? 0),
+  const annualIncentive = Object.values(monthlyIncentive).reduce<number>(
+    (sum, d) => sum + (d ?? 0),
     0
   );
-  const annualIncentive = Object.values(monthlyData).reduce(
-    (sum, d) => sum + (d.incentive ?? 0),
-    0
-  );
-  const annualTotal = annualSalary + annualIncentive;
 
   if (!user) {
     return (
@@ -210,36 +169,20 @@ export default function MyPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>월</TableHead>
-                <TableHead className="text-right">급여</TableHead>
                 <TableHead className="text-right">인센티브</TableHead>
-                <TableHead className="text-right">합계</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Array.from({ length: 12 }, (_, i) => {
                 const m = i + 1;
-                const d = monthlyData[m];
-                const salary = d?.salary;
-                const incentive = d?.incentive;
-                const hasData = salary !== null || incentive !== null;
-                const total = (salary ?? 0) + (incentive ?? 0);
+                const incentive = monthlyIncentive[m];
 
                 return (
                   <TableRow key={m}>
                     <TableCell className="font-medium">{m}월</TableCell>
                     <TableCell className="text-right">
-                      {salary !== null
-                        ? `${salary.toLocaleString()}원`
-                        : "-"}
-                    </TableCell>
-                    <TableCell className="text-right">
                       {incentive !== null
                         ? `${incentive.toLocaleString()}원`
-                        : "-"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {hasData
-                        ? `${total.toLocaleString()}원`
                         : "-"}
                     </TableCell>
                   </TableRow>
@@ -250,29 +193,12 @@ export default function MyPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>연간 총계</CardTitle>
+              <CardTitle>연간 인센티브 총계</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">급여 합계</p>
-                  <p className="text-xl font-bold">
-                    {annualSalary.toLocaleString()}원
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">인센티브 합계</p>
-                  <p className="text-xl font-bold">
-                    {annualIncentive.toLocaleString()}원
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">총 합계</p>
-                  <p className="text-xl font-bold">
-                    {annualTotal.toLocaleString()}원
-                  </p>
-                </div>
-              </div>
+              <p className="text-xl font-bold">
+                {annualIncentive.toLocaleString()}원
+              </p>
             </CardContent>
           </Card>
         </>

@@ -39,7 +39,7 @@ interface ApiResponse<T> {
 }
 
 export default function SettingsPage() {
-  const [laborCostRatio, setLaborCostRatio] = useState("");
+  // 전체 인건비율은 팀별 인건비율의 합으로 자동 계산
   const [incentiveRatio, setIncentiveRatio] = useState("");
   const [designTeamRatio, setDesignTeamRatio] = useState("");
   const [fieldTeamRatio, setFieldTeamRatio] = useState("");
@@ -59,7 +59,6 @@ export default function SettingsPage() {
       try {
         const res = await api.get<ApiResponse<SettingsData>>("/api/settings");
         if (res.success && res.data) {
-          setLaborCostRatio(String(res.data.labor_cost_ratio));
           setIncentiveRatio(String(res.data.incentive_ratio));
           setDesignTeamRatio(String(res.data.design_team_labor_cost_ratio));
           setFieldTeamRatio(String(res.data.field_team_labor_cost_ratio));
@@ -86,8 +85,9 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const calculatedLaborCostRatio = Number(designTeamRatio) + Number(fieldTeamRatio) + Number(salesTeamRatio);
       const res = await api.put<ApiResponse<SettingsData>>("/api/settings", {
-        labor_cost_ratio: Number(laborCostRatio),
+        labor_cost_ratio: calculatedLaborCostRatio,
         incentive_ratio: Number(incentiveRatio),
         design_team_labor_cost_ratio: Number(designTeamRatio),
         field_team_labor_cost_ratio: Number(fieldTeamRatio),
@@ -128,17 +128,11 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="laborCostRatio">인건비율 (%)</Label>
-            <Input
-              id="laborCostRatio"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={laborCostRatio}
-              onChange={(e) => setLaborCostRatio(e.target.value)}
-              placeholder="예: 30"
-            />
+            <Label>인건비율 (%)</Label>
+            <p className="text-base md:text-xl font-bold text-muted-foreground">
+              {(Number(designTeamRatio) + Number(fieldTeamRatio) + Number(salesTeamRatio)).toFixed(1)}%
+              <span className="text-xs font-normal ml-2">(팀별 인건비율 합계 자동 계산)</span>
+            </p>
           </div>
 
           <div className="space-y-2">

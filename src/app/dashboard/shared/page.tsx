@@ -55,13 +55,18 @@ interface ChartItem {
   actualProfit: number;
 }
 
+interface UserInfo {
+  role: "admin" | "team_leader" | "employee";
+  team: string | null;
+}
+
 interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
 }
 
-// 대시보드와 동일하되 인건비 관련 항목을 제외한 직원 공유 페이지
+// 팀장: 자기 팀 인건비 포함 / 일반 직원: 인건비 제외
 export default function SharedDashboardPage() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -69,10 +74,50 @@ export default function SharedDashboardPage() {
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [chartData, setChartData] = useState<ChartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const { toasts, toast, dismissToast } = useToast();
 
   const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - 2 + i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  // 사용자 정보(역할, 팀) 가져오기
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          const userInfo = data.data ?? data;
+          setUser({ role: userInfo.role, team: userInfo.team });
+        }
+      } catch {
+        // 사용자 정보 실패 시 일반 직원으로 취급
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // 팀장이 자기 팀의 인건비를 볼 수 있는지 판별
+  const isTeamLeader = user?.role === "team_leader";
+  const myTeam = user?.team;
+
+  // 팀명과 summary 필드 매핑
+  const getTeamLaborData = (teamName: string) => {
+    if (!summary) return null;
+    switch (teamName) {
+      case "디자인팀":
+        return { laborCostRatio: summary.designTeamLaborCostRatio, laborCost: summary.designTeamLaborCost };
+      case "현장팀":
+        return { laborCostRatio: summary.fieldTeamLaborCostRatio, laborCost: summary.fieldTeamLaborCost };
+      case "영업팀":
+        return { laborCostRatio: summary.salesTeamLaborCostRatio, laborCost: summary.salesTeamLaborCost };
+      default:
+        return null;
+    }
+  };
+
+  // 해당 팀 카드에 인건비를 표시할지 여부
+  const showLaborForTeam = (teamName: string) => isTeamLeader && myTeam === teamName;
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -210,6 +255,21 @@ export default function SharedDashboardPage() {
               <CardTitle className="text-sm font-semibold">디자인팀</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              {showLaborForTeam("디자인팀") && (() => {
+                const labor = getTeamLaborData("디자인팀");
+                return labor ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비율</span>
+                      <span className="font-bold">{labor.laborCostRatio}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비</span>
+                      <span className="font-bold">{labor.laborCost.toLocaleString()}원</span>
+                    </div>
+                  </>
+                ) : null;
+              })()}
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">목표영업이익</span>
                 <span className="font-bold">{Math.round(summary.designTeamTargetProfit).toLocaleString()}원</span>
@@ -232,6 +292,21 @@ export default function SharedDashboardPage() {
               <CardTitle className="text-sm font-semibold">현장팀</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              {showLaborForTeam("현장팀") && (() => {
+                const labor = getTeamLaborData("현장팀");
+                return labor ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비율</span>
+                      <span className="font-bold">{labor.laborCostRatio}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비</span>
+                      <span className="font-bold">{labor.laborCost.toLocaleString()}원</span>
+                    </div>
+                  </>
+                ) : null;
+              })()}
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">목표영업이익</span>
                 <span className="font-bold">{Math.round(summary.fieldTeamTargetProfit).toLocaleString()}원</span>
@@ -254,6 +329,21 @@ export default function SharedDashboardPage() {
               <CardTitle className="text-sm font-semibold">영업팀</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              {showLaborForTeam("영업팀") && (() => {
+                const labor = getTeamLaborData("영업팀");
+                return labor ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비율</span>
+                      <span className="font-bold">{labor.laborCostRatio}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">인건비</span>
+                      <span className="font-bold">{labor.laborCost.toLocaleString()}원</span>
+                    </div>
+                  </>
+                ) : null;
+              })()}
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">목표영업이익</span>
                 <span className="font-bold">{Math.round(summary.salesTeamTargetProfit).toLocaleString()}원</span>
