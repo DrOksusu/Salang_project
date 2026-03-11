@@ -32,8 +32,9 @@ export default function DashboardLayout({
         const data = await res.json();
         const userInfo: UserInfo = data.data ?? data;
 
-        // /dashboard/profit 경로는 비관리자(employee, team_leader)도 접근 허용
-        if (pathname !== "/dashboard/profit") {
+        // /dashboard/profit, /dashboard/shared 경로는 비관리자(employee, team_leader)도 접근 허용
+        const publicPaths = ["/dashboard/profit", "/dashboard/shared"];
+        if (!publicPaths.includes(pathname)) {
           if (userInfo.role === "employee") {
             router.push("/mypage");
             return;
