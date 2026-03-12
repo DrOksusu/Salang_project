@@ -21,6 +21,8 @@ interface UserInfo {
   email: string;
   role: string;
   position?: string;
+  team?: string;
+  hire_date?: string;
 }
 
 interface IncentiveRecord {
@@ -129,7 +131,7 @@ export default function MyPage() {
           <CardTitle>내 정보</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <div>
               <p className="text-sm text-muted-foreground">이름</p>
               <p className="text-lg font-medium">{user.name}</p>
@@ -141,6 +143,16 @@ export default function MyPage() {
             <div>
               <p className="text-sm text-muted-foreground">직급</p>
               <p className="text-lg font-medium">{user.position ?? "-"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">소속팀</p>
+              <p className="text-lg font-medium">{user.team ?? "-"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">입사일</p>
+              <p className="text-lg font-medium">
+                {user.hire_date ? user.hire_date.split("T")[0] : "-"}
+              </p>
             </div>
           </div>
         </CardContent>

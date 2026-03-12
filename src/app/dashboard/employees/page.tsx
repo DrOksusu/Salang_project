@@ -50,6 +50,9 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [filterTeam, setFilterTeam] = useState("");
+  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
   const [form, setForm] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -158,6 +161,32 @@ export default function EmployeesPage() {
       toast({ title: "오류", description: message, variant: "destructive" });
     }
   };
+
+  const handleActivate = async (id: number, name: string) => {
+    if (!confirm(`${name} 직원을 다시 활성화하시겠습니까?`)) return;
+
+    try {
+      const res = await api.put<ApiResponse<Employee>>(`/api/employees/${id}`, {
+        is_active: true,
+      });
+      if (res.success) {
+        toast({ title: "성공", description: "직원이 활성화되었습니다." });
+        fetchEmployees();
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "활성화에 실패했습니다.";
+      toast({ title: "오류", description: message, variant: "destructive" });
+    }
+  };
+
+  // 필터링된 직원 목록
+  const filteredEmployees = employees.filter((emp) => {
+    if (searchName && !emp.name.includes(searchName)) return false;
+    if (filterTeam && emp.team !== filterTeam) return false;
+    if (filterStatus === "active" && !emp.is_active) return false;
+    if (filterStatus === "inactive" && emp.is_active) return false;
+    return true;
+  });
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "-";
@@ -278,6 +307,37 @@ export default function EmployeesPage() {
         </Card>
       )}
 
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Input
+          placeholder="이름 검색"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          className="w-full sm:w-40"
+        />
+        <Select
+          value={filterTeam}
+          onChange={(e) => setFilterTeam(e.target.value)}
+          className="w-full sm:w-32"
+        >
+          <option value="">전체 팀</option>
+          {TEAMS.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </Select>
+        <Select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value as "all" | "active" | "inactive")}
+          className="w-full sm:w-32"
+        >
+          <option value="all">전체 상태</option>
+          <option value="active">활성</option>
+          <option value="inactive">비활성</option>
+        </Select>
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
+          {filteredEmployees.length}명
+        </span>
+      </div>
+
       <Card>
         <CardContent className="p-0 overflow-x-auto">
           <Table className="min-w-[700px]">
@@ -294,14 +354,14 @@ export default function EmployeesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees.length === 0 ? (
+              {filteredEmployees.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                    등록된 직원이 없습니다.
+                    {employees.length === 0 ? "등록된 직원이 없습니다." : "검색 결과가 없습니다."}
                   </TableCell>
                 </TableRow>
               ) : (
-                employees.map((emp) => (
+                filteredEmployees.map((emp) => (
                   <TableRow key={emp.id}>
                     {editingId === emp.id ? (
                       <>
@@ -429,7 +489,15 @@ export default function EmployeesPage() {
                               >
                                 비활성화
                               </Button>
-                            ) : null}
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleActivate(emp.id, emp.name)}
+                              >
+                                활성화
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </>

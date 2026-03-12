@@ -149,15 +149,15 @@ export default function SettingsPage() {
             />
           </div>
 
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "저장 중..." : "저장"}
-          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>팀별 지표 설정</CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">
+            인건비율: 매출 대비 인건비 비중 | 마진율: 매출 대비 이익 비중 | 인센티브율: 초과이익 중 인센티브 배분 비율
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <Table>
@@ -281,11 +281,14 @@ export default function SettingsPage() {
             </TableBody>
           </Table>
 
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "저장 중..." : "저장"}
-          </Button>
         </CardContent>
       </Card>
+
+      <div className="flex justify-end">
+        <Button onClick={handleSave} disabled={saving} size="lg">
+          {saving ? "저장 중..." : "전체 설정 저장"}
+        </Button>
+      </div>
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
